@@ -72,25 +72,6 @@ fi
 
 RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 
-# $EPOCHSECONDS, strftime等を利用可能に
-zmodload zsh/datetime
-
-# 60秒に1回正確に時間を見にいきます
-reset_tmout() {
-    TMOUT=$[60-EPOCHSECONDS%60] 
-}
-
-# プロンプト表示時に更新までの時間を再計算
-precmd_functions=($precmd_functions reset_tmout) 
-redraw_tmout() { 
-    zle reset-prompt; reset_tmout 
-} 
-
-# 時刻を更新
-TRAPALRM() { 
-    redraw_tmout 
-}
-
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
 select-word-style default
