@@ -1,4 +1,4 @@
-########################################
+「########################################
 # 環境変数
 export LANG=ja_JP.UTF-8
 export LSCOLORS=gxfxcxdxbxegedabagacad
@@ -21,9 +21,6 @@ fi
 export PATH=$GOPATH/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
-
-# awscli補完機能有効化
-#source /usr/local/bin/aws_zsh_completer.sh
 
 ########################################
 # プロンプトなどの設定
@@ -81,7 +78,6 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
-#zstyle ':completion:*' menu select
 zstyle ':completion:*:default' menu select=1
 
 ########################################
@@ -109,9 +105,6 @@ setopt no_beep
 
 # フローコントロールを無効にする
 setopt no_flow_control
-
-# Ctrl+Dでzshを終了しない
-#setopt ignore_eof
 
 # '#' 以降をコメントとして扱う
 setopt interactive_comments
@@ -166,7 +159,7 @@ setopt no_flow_control
 
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
 bindkey '^R' history-incremental-pattern-search-backward
-bindkey "^S" history-incremental-pattern-search-forward
+bindkey '^E' history-incremental-pattern-search-forward
 
 ########################################
 # エイリアス
