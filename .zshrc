@@ -8,10 +8,10 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 # Go言語の設定
 
 if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/${USER}/go/bin
-    export GOROOT=/Users/${USER}/go
-    export GOPATH=/Users/${USER}/go-third-party
-    export PATH=$PATH:/${USER}/s02435/.nodebrew/current/bin
+    export GOBIN=/Users/s02435/go/bin
+    export GOROOT=/Users/s02435/go
+    export GOPATH=/Users/s02435/go-third-party
+    export PATH=$PATH:/Users/s02435/.nodebrew/current/bin
 else
     export GOBIN=/usr/src/go/bin
     export GOROOT=/usr/src/go
@@ -21,6 +21,9 @@ fi
 export PATH=$GOPATH/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
+
+# awscli補完機能有効化
+source /usr/local/bin/aws_zsh_completer.sh
 
 ########################################
 # プロンプトなどの設定
@@ -79,7 +82,7 @@ zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
 #zstyle ':completion:*' menu select
-zstyle ':completion:*:default' menu select=1
+zstyle ':completion:*:default' menu select
 
 ########################################
 # vcs_info
@@ -239,6 +242,18 @@ function tkillall() {
     tmux kill-server
 }
 
+function adssh() {
+    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
+}
+
+function ciassh() {
+    ssh cia_infra@"$1"
+}
+
+function xssh() {
+    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
+}
+
 function itsmine() {
     chown 1051436384:1796141739 "$1"
 }
@@ -291,22 +306,6 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
-
-function peco-select-history() {
-    local tac
-    if which tac > /dev/null; then
-        tac="tac"
-    else
-        tac="tail -r"
-    fi
-    BUFFER=$(history -n 1 | \
-        eval $tac | \
-        peco --query "$LBUFFER")
-    CURSOR=$#BUFFER
-    zle clear-screen
-}
-zle -N peco-select-history
-#bindkey '^r' peco-select-history
 
 ########################################
 # 外部プラグイン
