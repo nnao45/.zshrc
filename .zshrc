@@ -178,10 +178,10 @@ esac
 ########################################
 # Go言語の設定
 if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/s02435/go/bin
-    export GOROOT=/Users/s02435/go
-    export GOPATH=/Users/s02435/go-third-party
-    export PATH=$PATH:/Users/s02435/.nodebrew/current/bin
+    export GOBIN=/Users/$USER/go/bin
+    export GOROOT=/Users/$USER/go
+    export GOPATH=/Users/$USER/go-third-party
+    export PATH=$PATH:/Users/$USER/.nodebrew/current/bin
 else
     export GOBIN=/usr/src/go/bin
     export GOROOT=/usr/src/go
