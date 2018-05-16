@@ -23,7 +23,7 @@ export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 # awscli補完機能有効化
-source /usr/local/bin/aws_zsh_completer.sh
+#source /usr/local/bin/aws_zsh_completer.sh
 
 ########################################
 # プロンプトなどの設定
@@ -81,6 +81,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
+#zstyle ':completion:*' menu select
 zstyle ':completion:*:default' menu select=1
 
 ########################################
@@ -157,12 +158,15 @@ setopt auto_param_keys
 # 語の途中でもカーソル位置で補完
 #setopt complete_in_word
 
+# フロー制御をやめる
+setopt no_flow_control
+
 ########################################
 # キーバインド
 
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
 bindkey '^R' history-incremental-pattern-search-backward
-bindkey '^D' exit
+bindkey "^S" history-incremental-pattern-search-forward
 
 ########################################
 # エイリアス
@@ -333,3 +337,6 @@ if ! zplug check --verbose; then
 fi
 # Then, source plugins and add commands to $PATH
 zplug load
+
+# awscli補完機能有効化
+source /usr/local/bin/aws_zsh_completer.sh
