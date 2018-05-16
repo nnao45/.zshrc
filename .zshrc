@@ -1,7 +1,6 @@
-「########################################
+########################################
 # 環境変数
 export LANG=ja_JP.UTF-8
-export LSCOLORS=gxfxcxdxbxegedabagacad
 export PATH=/usr/local/bin:$PATH
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
@@ -11,7 +10,7 @@ if [ "$(uname)" = 'Darwin' ]; then
     export GOBIN=/Users/${USER}/go/bin
     export GOROOT=/Users/${USER}/go
     export GOPATH=/Users/${USER}/go-third-party
-    export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
+    export PATH=$PATH:/${USER}/s02435/.nodebrew/current/bin
 else
     export GOBIN=/usr/src/go/bin
     export GOROOT=/usr/src/go
@@ -21,6 +20,9 @@ fi
 export PATH=$GOPATH/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
+
+# awscli補完機能有効化
+#source /usr/local/bin/aws_zsh_completer.sh
 
 ########################################
 # プロンプトなどの設定
@@ -42,8 +44,14 @@ SAVEHIST=1000000
 # エスケープシーケンスを通すオプション
 setopt prompt_subst
 
-PROMPT=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}
+if [ "$(uname)" = 'Darwin' ]; then
+    PROMPT=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}
+%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
+else
+    PROMPT=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}
 %{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
+fi
+
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -55,8 +63,11 @@ zstyle ':zle:*' word-style unspecified
 
 ## 補完候補の色づけ
 eval `dircolors`
-export ZLS_COLORS=$LS_COLORS
+#export ZLS_COLORS=$LS_COLORS
+export LSCOLORS=gxfxcxdxbxegedabagacad
+export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors 'di=34' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
 ########################################
 # 補完
@@ -78,6 +89,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
+#zstyle ':completion:*' menu select
 zstyle ':completion:*:default' menu select=1
 
 ########################################
@@ -105,6 +117,9 @@ setopt no_beep
 
 # フローコントロールを無効にする
 setopt no_flow_control
+
+# Ctrl+Dでzshを終了しない
+#setopt ignore_eof
 
 # '#' 以降をコメントとして扱う
 setopt interactive_comments
@@ -140,7 +155,7 @@ setopt extended_glob
 setopt correct
 
 # 補完候補を詰めて表示する
-setopt list_packed
+setopt list_packed 
 
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
 #setopt always_last_prompt
@@ -159,14 +174,13 @@ setopt no_flow_control
 
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
 bindkey '^R' history-incremental-pattern-search-backward
-bindkey '^E' history-incremental-pattern-search-forward
+bindkey "^E" history-incremental-pattern-search-forward
 
 ########################################
 # エイリアス
 
 if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
     alias dir='dir --color=auto'
     alias vdir='vdir --color=auto'
 
@@ -175,9 +189,10 @@ if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     alias egrep='egrep --color=auto'
 fi
 
-alias l='ls -CF --color=auto'
-alias la='ls -la --color=auto'
-alias ll='ls -l --color=auto'
+alias ls='ls --color=auto'
+alias l='ls -CF'
+alias la='ls -la'
+alias ll='ls -l'
 
 alias rm='rm -i'
 alias cp='cp -i'
@@ -240,12 +255,12 @@ function tkill() {
     tmux kill-session -t "$1"
 }
 
-function tkillall() {
+function tkillall() { 
     tmux kill-server
 }
 
 function itsmine() {
-    chown 1051436384:1796141739 "$1"
+    chown 1051436384:1796141739 "$1" 
 }
 
 function who() {
