@@ -72,6 +72,34 @@ fi
 
 RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 
+
+# プロンプト自動更新
+
+# $EPOCHSECONDS, strftime等を利用可能に
+autoload -U is-at-least
+
+reset_tmout() { 
+    TMOUT=1 
+}
+
+precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
+
+reset_lastcomp() { _lastcomp=() }
+if is-at-least 5.1; then
+    # avoid menuselect to be cleared by reset-prompt
+    redraw_tmout() {
+        [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
+        reset_tmout
+    }
+else
+    # evaluating $WIDGET in TMOUT may crash :(
+    redraw_tmout() { zle reset-prompt; reset_tmout }
+fi
+
+TRAPALRM() { 
+    redraw_tmout 
+}
+
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
 select-word-style default
