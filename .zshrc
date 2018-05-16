@@ -75,9 +75,9 @@ RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 # $EPOCHSECONDS, strftime等を利用可能に
 zmodload zsh/datetime
 
-# 30秒に1回正確に時間を見にいきます
+# 60秒に1回正確に時間を見にいきます
 reset_tmout() {
-    TMOUT=$[30-EPOCHSECONDS%30] 
+    TMOUT=$[60-EPOCHSECONDS%60] 
 }
 
 # プロンプト表示時に更新までの時間を再計算
