@@ -2,6 +2,27 @@
 # 環境変数
 export LANG=ja_JP.UTF-8
 export LSCOLORS=gxfxcxdxbxegedabagacad
+export PATH=/usr/local/bin:$PATH
+
+# Go言語の設定
+
+if [ "$(uname)" = 'Darwin' ]; then
+    export GOBIN=/Users/s02435/go/bin
+    export GOROOT=/Users/s02435/go
+    export GOPATH=/Users/s02435/go-third-party
+    export PATH=$PATH:/Users/s02435/.nodebrew/current/bin
+else
+    export GOBIN=/usr/src/go/bin
+    export GOROOT=/usr/src/go
+    export GOPATH=/usr/src/go-third-party
+fi
+
+export PATH=$GOPATH/bin:$PATH
+export PATH=$GOROOT/bin:$PATH
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+
+########################################
+# プロンプトなどの設定
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -176,24 +197,6 @@ esac
 # vim:set ft=zsh:
 
 ########################################
-# Go言語の設定
-if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/$USER/go/bin
-    export GOROOT=/Users/$USER/go
-    export GOPATH=/Users/$USER/go-third-party
-    export PATH=$PATH:/Users/$USER/.nodebrew/current/bin
-else
-    export GOBIN=/usr/src/go/bin
-    export GOROOT=/usr/src/go
-    export GOPATH=/usr/src/go-third-party
-fi
-
-export PATH=/usr/local/bin:$PATH
-export PATH=$GOPATH/bin:$PATH
-export PATH=$GOROOT/bin:$PATH
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-
-########################################
 # tmuxの設定
 
 # 自動ロギング
@@ -236,6 +239,18 @@ function tkill() {
 
 function tkillall() {
     tmux kill-server
+}
+
+function adssh() {
+    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
+}
+
+function ciassh() {
+    ssh cia_infra@"$1"
+}
+
+function xssh() {
+    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
 }
 
 function itsmine() {
