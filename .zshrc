@@ -71,7 +71,7 @@ else
 fi
 
 RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
-TMOUT=1
+TMOUT=10
 TRAPALRM() {
   zle reset-prompt
 }
