@@ -8,10 +8,10 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 # Go言語の設定
 
 if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/s02435/go/bin
-    export GOROOT=/Users/s02435/go
-    export GOPATH=/Users/s02435/go-third-party
-    export PATH=$PATH:/Users/s02435/.nodebrew/current/bin
+    export GOBIN=/Users/${USER}/go/bin
+    export GOROOT=/Users/${USER}/go
+    export GOPATH=/Users/${USER}/go-third-party
+    export PATH=$PATH:/${USER}/s02435/.nodebrew/current/bin
 else
     export GOBIN=/usr/src/go/bin
     export GOROOT=/usr/src/go
@@ -237,18 +237,6 @@ function tkill() {
 
 function tkillall() {
     tmux kill-server
-}
-
-function adssh() {
-    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
-}
-
-function ciassh() {
-    ssh cia_infra@"$1"
-}
-
-function xssh() {
-    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
 }
 
 function itsmine() {
