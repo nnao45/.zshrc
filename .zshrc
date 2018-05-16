@@ -151,6 +151,12 @@ setopt list_packed
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
 #setopt always_last_prompt
 
+# カッコの対応などを自動的に補完
+setopt auto_param_keys
+
+# 語の途中でもカーソル位置で補完
+setopt complete_in_word
+
 ########################################
 # キーバインド
 
