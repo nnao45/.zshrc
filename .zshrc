@@ -53,7 +53,7 @@ precmd() {
   else
   	local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}'
   fi
-  local right="${vcs_info_msg_0_}"
+  local right="${vcs_info_msg_0_} "
 
   # スペースの長さを計算
   # テキストを装飾する場合、エスケープシーケンスをカウントしないようにします
