@@ -251,18 +251,6 @@ function tkillall() {
     tmux kill-server
 }
 
-function adssh() {
-    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
-}
-
-function ciassh() {
-    ssh cia_infra@"$1"
-}
-
-function xssh() {
-    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
-}
-
 function itsmine() {
     chown 1051436384:1796141739 "$1"
 }
