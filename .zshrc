@@ -81,8 +81,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
-#zstyle ':completion:*' menu select
-zstyle ':completion:*:default' menu select
+zstyle ':completion:*:default' menu select=1
 
 ########################################
 # vcs_info
