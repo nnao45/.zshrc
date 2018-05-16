@@ -3,6 +3,7 @@
 export LANG=ja_JP.UTF-8
 export LSCOLORS=gxfxcxdxbxegedabagacad
 export PATH=/usr/local/bin:$PATH
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
 # Go言語の設定
 
@@ -52,6 +53,11 @@ select-word-style default
 zstyle ':zle:*' word-chars " /=;@:{},|"
 zstyle ':zle:*' word-style unspecified
 
+## 補完候補の色づけ
+eval `dircolors`
+export ZLS_COLORS=$LS_COLORS
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
 ########################################
 # 補完
 # 補完機能を有効にする
@@ -72,7 +78,8 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
-zstyle ':completion:*' menu select
+#zstyle ':completion:*' menu select
+zstyle ':completion:*:default' menu select=1
 
 ########################################
 # vcs_info
@@ -111,8 +118,12 @@ setopt auto_cd
 
 # cd したら自動的にpushdする
 setopt auto_pushd
+
 # 重複したディレクトリを追加しない
 setopt pushd_ignore_dups
+
+## zsh の開始, 終了時刻をヒストリファイルに書き込む
+setopt extended_history
 
 # 同時に起動したzshの間でヒストリを共有する
 setopt share_history
@@ -129,19 +140,39 @@ setopt hist_reduce_blanks
 # 高機能なワイルドカード展開を使用する
 setopt extended_glob
 
+# コマンド訂正
+setopt correct
+
+# 補完候補を詰めて表示する
+setopt list_packed
+
+# カーソル位置は保持したままファイル名一覧を順次その場で表示
+setopt always_last_prompt
+
 ########################################
 # キーバインド
 
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-#bindkey '^R' history-incremental-pattern-search-backward
+bindkey '^R' history-incremental-pattern-search-backward
 bindkey '^D' exit
 
 ########################################
 # エイリアス
 
-alias l='ls -CF'
-alias la='ls -a'
-alias ll='ls -l'
+if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    alias dir='dir --color=auto'
+    alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+alias l='ls -CF --color=auto'
+alias la='ls -la --color=auto'
+alias ll='ls -l --color=auto'
 
 alias rm='rm -i'
 alias cp='cp -i'
@@ -180,23 +211,6 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     alias -g C='| putclip'
 fi
-
-
-########################################
-# OS 別の設定
-case ${OSTYPE} in
-    darwin*)
-        #Mac用の設定
-        export CLICOLOR=1
-        alias ls='ls -G -F'
-        ;;
-    linux*)
-        #Linux用の設定
-        alias ls='ls -F --color=auto'
-        ;;
-esac
-
-# vim:set ft=zsh:
 
 ########################################
 # tmuxの設定
@@ -304,7 +318,7 @@ function peco-select-history() {
     zle clear-screen
 }
 zle -N peco-select-history
-bindkey '^r' peco-select-history
+#bindkey '^r' peco-select-history
 
 ########################################
 # 外部プラグイン
