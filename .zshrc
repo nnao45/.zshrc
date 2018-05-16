@@ -123,7 +123,7 @@ setopt auto_pushd
 setopt pushd_ignore_dups
 
 ## zsh の開始, 終了時刻をヒストリファイルに書き込む
-setopt extended_history
+#setopt extended_history
 
 # 同時に起動したzshの間でヒストリを共有する
 setopt share_history
@@ -147,7 +147,7 @@ setopt correct
 setopt list_packed
 
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
-setopt always_last_prompt
+#setopt always_last_prompt
 
 ########################################
 # キーバインド
