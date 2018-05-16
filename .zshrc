@@ -155,7 +155,7 @@ setopt list_packed
 setopt auto_param_keys
 
 # 語の途中でもカーソル位置で補完
-setopt complete_in_word
+#setopt complete_in_word
 
 ########################################
 # キーバインド
