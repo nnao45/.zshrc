@@ -73,9 +73,7 @@ fi
 RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 
 
-# プロンプト自動更新
-
-# $EPOCHSECONDS, strftime等を利用可能に
+# プロンプト自動更新設定
 autoload -U is-at-least
 
 reset_tmout() { 
