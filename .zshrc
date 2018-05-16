@@ -21,18 +21,12 @@ export PATH=$GOPATH/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 
-# awscli補完機能有効化
-#source /usr/local/bin/aws_zsh_completer.sh
-
 ########################################
 # プロンプトなどの設定
 
 # 色を使用出来るようにする
 autoload -Uz colors
 colors
-
-# emacs 風キーバインドにする
-#bindkey -e
 
 # ヒストリの設定
 HISTFILE=~/.zsh_history
@@ -117,21 +111,6 @@ zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 # 選択中の候補を塗りつぶす
 #zstyle ':completion:*' menu select
 zstyle ':completion:*:default' menu select=1
-
-########################################
-# vcs_info
-#autoload -Uz vcs_info
-#autoload -Uz add-zsh-hook
-
-#zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-#zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
-
-#function _update_vcs_info_msg() {
-#    LANG=en_US.UTF-8 vcs_info
-#    RPROMPT="${vcs_info_msg_0_}"
-#}
-#add-zsh-hook precmd _update_vcs_info_msg
-
 
 ########################################
 # オプション
@@ -283,18 +262,6 @@ function tkill() {
 
 function tkillall() { 
     tmux kill-server
-}
-
-function adssh() {
-    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
-}
-
-function ciassh() {
-    ssh cia_infra@"$1"
-}
-
-function xssh() {
-    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
 }
 
 function itsmine() {
