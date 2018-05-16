@@ -71,6 +71,8 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
+# 選択中の候補を塗りつぶす
+zstyle ':completion:*' menu select
 
 ########################################
 # vcs_info
@@ -215,24 +217,6 @@ function sk() {
     mkdir "$1" ; touch "$1"/"$1.scala"
 }
 
-function reverse() {
-    if [ -p /dev/stdin ] ; then
-        local input=$(cat -)
-
-        echo "${input}" | while read line; do
-            local array=()
-            for e in ${line[@]}; do
-                array=(${e} "${array[@]}")
-            done
-
-            echo "${array[@]}"
-        done
-    else
-        echo "no stdin."
-    fi
-}
-
-
 function tkill() {
     tmux kill-session -t "$1"
 }
@@ -332,7 +316,7 @@ source ~/.zplug/init.zsh
 zplug "zsh-users/zsh-syntax-highlighting"
 # タイプ補完
 zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions"
+zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
 zplug "chrissicool/zsh-256color"
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
