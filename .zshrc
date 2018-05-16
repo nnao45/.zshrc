@@ -10,7 +10,7 @@ if [ "$(uname)" = 'Darwin' ]; then
     export GOBIN=/Users/${USER}/go/bin
     export GOROOT=/Users/${USER}/go
     export GOPATH=/Users/${USER}/go-third-party
-    export PATH=$PATH:/${USER}/s02435/.nodebrew/current/bin
+    export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
 else
     export GOBIN=/usr/src/go/bin
     export GOROOT=/usr/src/go
@@ -44,14 +44,40 @@ SAVEHIST=1000000
 # エスケープシーケンスを通すオプション
 setopt prompt_subst
 
+# 頑張って両方にprmptを表示させるヤツ https://qiita.com/zaapainfoz/items/355cd4d884ce03656285
+precmd() {
+  autoload -Uz vcs_info
+  autoload -Uz add-zsh-hook
+
+  zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
+  zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+
+  LANG=en_US.UTF-8 vcs_info
+
+  local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
+  local right="${vcs_info_msg_0_}"
+
+  # スペースの長さを計算
+  # テキストを装飾する場合、エスケープシーケンスをカウントしないようにします
+  local invisible='%([BSUbfksu]|([FK]|){*})'
+  local leftwidth=${#${(S%%)left//$~invisible/}}
+  local rightwidth=${#${(S%%)right//$~invisible/}}
+  local padwidth=$(($COLUMNS - ($leftwidth + $rightwidth) % $COLUMNS)) 
+  print -P $left${(r:$padwidth:: :)}$right
+}
+
 if [ "$(uname)" = 'Darwin' ]; then
-    PROMPT=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}
-%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
+    PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
 else
     PROMPT=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}
 %{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
+RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
+TMOUT=1
+TRAPALRM() {
+  zle reset-prompt
+}
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -94,17 +120,17 @@ zstyle ':completion:*:default' menu select=1
 
 ########################################
 # vcs_info
-autoload -Uz vcs_info
-autoload -Uz add-zsh-hook
+#autoload -Uz vcs_info
+#autoload -Uz add-zsh-hook
 
-zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+#zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
+#zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
 
-function _update_vcs_info_msg() {
-    LANG=en_US.UTF-8 vcs_info
-    RPROMPT="${vcs_info_msg_0_}"
-}
-add-zsh-hook precmd _update_vcs_info_msg
+#function _update_vcs_info_msg() {
+#    LANG=en_US.UTF-8 vcs_info
+#    RPROMPT="${vcs_info_msg_0_}"
+#}
+#add-zsh-hook precmd _update_vcs_info_msg
 
 
 ########################################
@@ -257,6 +283,18 @@ function tkill() {
 
 function tkillall() { 
     tmux kill-server
+}
+
+function adssh() {
+    ssh -i ~/Documents/keys/ca_perman yokoyama_naoya@"$1"
+}
+
+function ciassh() {
+    ssh cia_infra@"$1"
+}
+
+function xssh() {
+    cat /etc/hosts | peco | awk '{print $1}' | xpanes adssh
 }
 
 function itsmine() {
