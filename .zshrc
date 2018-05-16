@@ -43,8 +43,8 @@ precmd() {
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
 
-  zstyle ':vcs_info:*' formats '%F{green}(%s)-[%b]%f'
-  zstyle ':vcs_info:*' actionformats '%F{red}(%s)-[%b|%a]%f'
+  zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
+  zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
 
   LANG=en_US.UTF-8 vcs_info
 
@@ -70,7 +70,7 @@ else
     PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
-RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
+RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 
 
 # プロンプト自動更新設定
@@ -95,7 +95,7 @@ else
 fi
 
 TRAPALRM() { 
-    redraw_tmout 
+    redraw_tmout
 }
 
 # 単語の区切り文字を指定する
@@ -202,9 +202,16 @@ setopt no_flow_control
 ########################################
 # キーバインド
 
-# ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-bindkey '^R' history-incremental-pattern-search-backward
-bindkey "^E" history-incremental-pattern-search-forward
+# ヒストリー検索をpecoで。
+
+peco-select-history() {
+    BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+    CURSOR=${#BUFFER}
+    zle reset-prompt
+}
+
+zle -N peco-select-history
+bindkey '^r' peco-select-history
 
 ########################################
 # エイリアス
