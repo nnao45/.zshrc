@@ -386,7 +386,7 @@ zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
 zplug "chrissicool/zsh-256color"
 
-# cdコマンドをインタラクティブにするプラグイン … https:
+# cdコマンドをインタラクティブにするプラグイン(https://github.com/b4b4r07/gomi)
 zplug 'b4b4r07/gomi', as:command, from:gh-r
 alias gm='gomi'
 
