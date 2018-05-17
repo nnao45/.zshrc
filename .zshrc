@@ -86,7 +86,7 @@ recmd() {
     zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
     zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
     zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}[✑ %c%u%b|%a]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
   else
     zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
     zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
