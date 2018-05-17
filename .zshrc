@@ -22,6 +22,17 @@ export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 ########################################
+# Windows風のキーバインド
+# Deleteキー
+bindkey "^[[3~" delete-char
+
+# Homeキー
+bindkey "^[[1~" beginning-of-line
+
+# Endキー
+bindkey "^[[4~" end-of-line
+
+########################################
 # プロンプトなどの設定
 
 # 色を使用出来るようにする
