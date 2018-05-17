@@ -40,8 +40,8 @@ colors
 
 # ヒストリの設定
 HISTFILE=~/.zsh_history
-HISTSIZE=1000000
-SAVEHIST=1000000
+HISTSIZE=100000
+SAVEHIST=100000
 
 # プロンプト
 
@@ -85,10 +85,12 @@ else
     PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
+#RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 
-
 # プロンプト自動更新設定
+
+# $EPOCHSECONDS, strftime等を利用可能に
 autoload -U is-at-least
 
 reset_tmout() { 
@@ -97,7 +99,10 @@ reset_tmout() {
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
-reset_lastcomp() { _lastcomp=() }
+reset_lastcomp() { 
+    _lastcomp=() 
+}
+
 if is-at-least 5.1; then
     # avoid menuselect to be cleared by reset-prompt
     redraw_tmout() {
@@ -106,11 +111,13 @@ if is-at-least 5.1; then
     }
 else
     # evaluating $WIDGET in TMOUT may crash :(
-    redraw_tmout() { zle reset-prompt; reset_tmout }
+    redraw_tmout() { 
+        zle reset-prompt; reset_tmout 
+    }
 fi
 
 TRAPALRM() { 
-    redraw_tmout
+    redraw_tmout 
 }
 
 # 単語の区切り文字を指定する
@@ -149,8 +156,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # 選択中の候補を塗りつぶす
-#zstyle ':completion:*' menu select
-zstyle ':completion:*:default' menu select=1
+zstyle ':completion:*:default' menu select=2
 
 ########################################
 # オプション
@@ -244,55 +250,59 @@ bindkey "^S" clear-screen
 
 if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
+    abbrev-alias dir='dir --color=auto'
+    abbrev-alias vdir='vdir --color=auto'
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+    abbrev-alias grep='grep --color=auto'
+    abbrev-alias fgrep='fgrep --color=auto'
+    abbrev-alias egrep='egrep --color=auto'
 fi
 
-alias ls='ls --color=auto'
-alias l='ls -CF'
-alias la='ls -la'
-alias ll='ls -l'
+abbrev-alias ls='ls --color=auto'
+abbrev-alias l='ls -CF'
+abbrev-alias la='ls -la'
+abbrev-alias ll='ls -l'
 
-alias rm='rm -i'
-alias cp='cp -i'
-alias mv='mv -i'
+abbrev-alias rm='rm -i'
+abbrev-alias cp='cp -i'
+abbrev-alias mv='mv -i'
 
-alias mkdir='mkdir -p'
+abbrev-alias mkdir='mkdir -p'
 
-alias t='tmux -2'
+abbrev-alias t='tmux -2'
 
 if [ "$(uname)" = 'Darwin' ]; then
-        alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-        alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+        abbrev-alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+        abbrev-alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
-        alias vi='/usr/bin/vi'
-        alias vim='/usr/bin/vim'
+        abbrev-alias vi='/usr/bin/vi'
+        abbrev-alias vim='/usr/bin/vim'
 fi
 
-alias nkf8='nkf -w --overwrite ./*'
+abbrev-alias nkf8='nkf -w --overwrite ./*'
 
 # sudo の後のコマンドでエイリアスを有効にする
-alias sudo='sudo '
+abbrev-alias sudo='sudo '
 
 # グローバルエイリアス
-alias -g L='| less'
-alias -g G='| grep'
+abbrev-alias -g L='| less'
+abbrev-alias -g G='| grep'
+abbrev-alias tree="tree -NC"
+
+# パイプをandで書く。
+abbrev-alias -g and="|"
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
     # Mac
-    alias -g C='| pbcopy'
+    abbrev-alias -g C='| pbcopy'
 elif which xsel >/dev/null 2>&1 ; then
     # Linux
-    alias -g C='| xsel --input --clipboard'
+    abbrev-alias -g C='| xsel --input --clipboard'
 elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
-    alias -g C='| putclip'
+    abbrev-alias -g C='| putclip'
 fi
 
 ########################################
@@ -377,10 +387,10 @@ function pane() {
 ########################################
 # 外部プラグイン
 # zplug
-source ~/.zplug/init.zsh, defer:2 
+source ~/.zplug/init.zsh
 
 # 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
-zplug "zsh-users/zsh-syntax-highlighting"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2 
 # タイプ補完
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
@@ -388,7 +398,10 @@ zplug "chrissicool/zsh-256color"
 
 # simple trash tool that works on CLI, written in Go(https://github.com/b4b4r07/gomi)
 zplug 'b4b4r07/gomi', as:command, from:gh-r
-alias gm='gomi'
+abbrev-alias gm='gomi'
+
+# 略語を展開する
+zplug "momo-lab/zsh-abbrev-alias"
 
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
