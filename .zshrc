@@ -209,6 +209,9 @@ setopt auto_param_keys
 # フロー制御をやめる
 setopt no_flow_control
 
+# バックグラウンドジョブが終了したらすぐに知らせる
+setopt no_tify 
+
 ########################################
 # キーバインド
 # ヒストリー検索をpecoで。
