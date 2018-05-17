@@ -223,7 +223,16 @@ peco-select-history() {
 }
 
 zle -N peco-select-history
-bindkey '^r' peco-select-history
+bindkey '^R' peco-select-history
+
+function cd-up() { 
+    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+}
+
+zle -N cd-up
+bindkey "^A" cd-up
+
+bindkey "^S" clear-screen
 
 ########################################
 # エイリアス
