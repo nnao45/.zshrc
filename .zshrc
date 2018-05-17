@@ -385,6 +385,11 @@ zplug "zsh-users/zsh-syntax-highlighting"
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
 zplug "chrissicool/zsh-256color"
+
+# cdコマンドをインタラクティブにするプラグイン … https:
+zplug 'b4b4r07/gomi', as:command, from:gh-r
+alias gm='gomi'
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
   printf "Install? [y/N]: "
