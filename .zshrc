@@ -21,6 +21,35 @@ export PATH=$GOPATH/bin:$PATH
 export PATH=$GOROOT/bin:$PATH
 export PATH=$HOME/.nodebrew/current/bin:$PATH
 
+#######################################
+# 外部プラグイン
+# zplug
+source ~/.zplug/init.zsh
+
+# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+# タイプ補完
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
+zplug "chrissicool/zsh-256color"
+
+# simple trash tool that works on CLI, written in Go(https://github.com/b4b4r07/gomi)
+zplug 'b4b4r07/gomi', as:command, from:gh-r
+
+# 略語を展開する
+zplug "momo-lab/zsh-abbrev-alias"
+
+# Install plugins if there are plugins that have not been installed
+if ! zplug check --verbose; then
+  printf "Install? [y/N]: "
+  if read -q; then
+    echo; zplug install
+  fi
+fi
+# Then, source plugins and add commands to $PATH
+zplug load
+
+
 ########################################
 # Windows風のキーバインド
 # Deleteキー
@@ -85,7 +114,6 @@ else
     PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
-#RPROMPT=$'%{\e[38;5;246m%}[%D %*]%{\e[m%}'
 RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 
 # プロンプト自動更新設定
@@ -154,6 +182,9 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
+
+# awscli補完機能有効化
+source /usr/local/bin/aws_zsh_completer.sh
 
 # 選択中の候補を塗りつぶす
 zstyle ':completion:*:default' menu select=2
@@ -292,6 +323,9 @@ abbrev-alias tree="tree -NC"
 # パイプをandで書く。
 abbrev-alias -g and="|"
 
+# gomi
+abbrev-alias gm='gomi'
+
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
@@ -383,35 +417,3 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
-
-########################################
-# 外部プラグイン
-# zplug
-source ~/.zplug/init.zsh
-
-# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
-zplug "zsh-users/zsh-syntax-highlighting", defer:2 
-# タイプ補完
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
-zplug "chrissicool/zsh-256color"
-
-# simple trash tool that works on CLI, written in Go(https://github.com/b4b4r07/gomi)
-zplug 'b4b4r07/gomi', as:command, from:gh-r
-abbrev-alias gm='gomi'
-
-# 略語を展開する
-zplug "momo-lab/zsh-abbrev-alias"
-
-# Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
-fi
-# Then, source plugins and add commands to $PATH
-zplug load
-
-# awscli補完機能有効化
-source /usr/local/bin/aws_zsh_completer.sh
