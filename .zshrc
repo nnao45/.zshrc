@@ -377,7 +377,7 @@ function pane() {
 ########################################
 # 外部プラグイン
 # zplug
-source ~/.zplug/init.zsh
+source ~/.zplug/init.zsh, defer:2 
 
 # 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
 zplug "zsh-users/zsh-syntax-highlighting"
