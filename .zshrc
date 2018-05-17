@@ -53,10 +53,13 @@ precmd() {
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
 
-  zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
-  zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
-
-  LANG=en_US.UTF-8 vcs_info
+  if [ "$(uname)" = 'Darwin' ]; then
+    zstyle ':vcs_info:*' formats '%F{green}[✔ %b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}[✑ %b|%a]%f'
+  else
+    zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
+  fi
 
   if [ "$(uname)" = 'Darwin' ]; then
   	local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
@@ -64,6 +67,8 @@ precmd() {
   	local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}'
   fi
   local right="${vcs_info_msg_0_} "
+
+  LANG=en_US.UTF-8 vcs_info
 
   # スペースの長さを計算
   # テキストを装飾する場合、エスケープシーケンスをカウントしないようにします
