@@ -49,7 +49,6 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
-
 ########################################
 # Windows風のキーバインド
 # Deleteキー
