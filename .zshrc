@@ -77,13 +77,16 @@ SAVEHIST=100000
 setopt prompt_subst
 
 # 頑張って両方にprmptを表示させるヤツ https://qiita.com/zaapainfoz/items/355cd4d884ce03656285
-precmd() {
+recmd() {
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
 
   if [ "$(uname)" = 'Darwin' ]; then
-    zstyle ':vcs_info:*' formats '%F{green}[✔ %b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}[✑ %b|%a]%f'
+    zstyle ':vcs_info:git:*' check-for-changes true
+    zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+    zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
+    zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}[✑ %c%u%b|%a]%f'
   else
     zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
     zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
