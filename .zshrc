@@ -34,7 +34,6 @@ bindkey "^[[4~" end-of-line
 
 ########################################
 # プロンプトなどの設定
-
 # 色を使用出来るようにする
 autoload -Uz colors
 colors
@@ -281,7 +280,6 @@ fi
 
 ########################################
 # tmuxの設定
-
 # 自動ロギング
 if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
     LOGDIR=$HOME/Documents/term_logs
@@ -361,7 +359,6 @@ function pane() {
 
 ########################################
 # 外部プラグイン
-
 # zplug
 source ~/.zplug/init.zsh
 
