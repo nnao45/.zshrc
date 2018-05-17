@@ -118,10 +118,12 @@ RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 # プロンプト自動更新設定
 
 # $EPOCHSECONDS, strftime等を利用可能に
+zmodload zsh/datetime 
+
 autoload -U is-at-least
 
 reset_tmout() { 
-    TMOUT=1 
+    TMOUT=$[1-EPOCHSECONDS%1]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
