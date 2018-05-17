@@ -201,7 +201,6 @@ setopt no_flow_control
 
 ########################################
 # キーバインド
-
 # ヒストリー検索をpecoで。
 
 peco-select-history() {
