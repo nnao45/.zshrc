@@ -1,28 +1,25 @@
 ########################################
 # 環境変数
 
-if [ -z $TMUX ]; then
+export LANG=ja_JP.UTF-8
+export PATH=/usr/local/bin:$PATH
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
-    export LANG=ja_JP.UTF-8
-    export PATH=/usr/local/bin:$PATH
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-
-    # Go言語の設定
-    if [ "$(uname)" = 'Darwin' ]; then
-        export GOBIN=/Users/${USER}/go/bin
-        export GOROOT=/Users/${USER}/go
-        export GOPATH=/Users/${USER}/go-third-party
-        export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
-    else
-        export GOBIN=/usr/src/go/bin
-        export GOROOT=/usr/src/go
-        export GOPATH=/usr/src/go-third-party
-    fi
-
-    export PATH=$GOPATH/bin:$PATH
-    export PATH=$GOROOT/bin:$PATH
-    export PATH=$HOME/.nodebrew/current/bin:$PATH
+# Go言語の設定
+if [ "$(uname)" = 'Darwin' ]; then
+    export GOBIN=/Users/${USER}/go/bin
+    export GOROOT=/Users/${USER}/go
+    export GOPATH=/Users/${USER}/go-third-party
+    export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
+else
+    export GOBIN=/usr/src/go/bin
+    export GOROOT=/usr/src/go
+    export GOPATH=/usr/src/go-third-party
 fi
+
+export PATH=$GOPATH/bin:$PATH
+export PATH=$GOROOT/bin:$PATH
+export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 #######################################
 # 外部プラグイン
@@ -171,10 +168,8 @@ zstyle ':zle:*' word-style unspecified
 
 ## 補完候補の色づけ
 eval `dircolors`
-if [ -z $TMUX ]; then
-    export LSCOLORS=gxfxcxdxbxegedabagacad
-    export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-fi
+export LSCOLORS=gxfxcxdxbxegedabagacad
+export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
