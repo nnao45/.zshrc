@@ -1,25 +1,28 @@
 ########################################
 # 環境変数
-export LANG=ja_JP.UTF-8
-export PATH=/usr/local/bin:$PATH
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
-# Go言語の設定
+if [ -z $TMUX ]; then
 
-if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/${USER}/go/bin
-    export GOROOT=/Users/${USER}/go
-    export GOPATH=/Users/${USER}/go-third-party
-    export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
-else
-    export GOBIN=/usr/src/go/bin
-    export GOROOT=/usr/src/go
-    export GOPATH=/usr/src/go-third-party
+    export LANG=ja_JP.UTF-8
+    export PATH=/usr/local/bin:$PATH
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+
+    # Go言語の設定
+    if [ "$(uname)" = 'Darwin' ]; then
+        export GOBIN=/Users/${USER}/go/bin
+        export GOROOT=/Users/${USER}/go
+        export GOPATH=/Users/${USER}/go-third-party
+        export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
+    else
+        export GOBIN=/usr/src/go/bin
+        export GOROOT=/usr/src/go
+        export GOPATH=/usr/src/go-third-party
+    fi
+
+    export PATH=$GOPATH/bin:$PATH
+    export PATH=$GOROOT/bin:$PATH
+    export PATH=$HOME/.nodebrew/current/bin:$PATH
 fi
-
-export PATH=$GOPATH/bin:$PATH
-export PATH=$GOROOT/bin:$PATH
-export PATH=$HOME/.nodebrew/current/bin:$PATH
 
 #######################################
 # 外部プラグイン
@@ -49,6 +52,7 @@ fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
+
 ########################################
 # Windows風のキーバインド
 # Deleteキー
@@ -76,15 +80,18 @@ SAVEHIST=100000
 # エスケープシーケンスを通すオプション
 setopt prompt_subst
 
+# 改行のない出力をプロンプトで上書きするのを防ぐ
+unsetopt promptcr
+
 # 頑張って両方にprmptを表示させるヤツ https://qiita.com/zaapainfoz/items/355cd4d884ce03656285
-recmd() {
+precmd() {
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
 
   if [ "$(uname)" = 'Darwin' ]; then
     zstyle ':vcs_info:git:*' check-for-changes true
     zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-    zstyle ':vcs_info:git:*' unstagedstr "%F{red}+"
+    zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
     zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
     zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
   else
@@ -123,11 +130,9 @@ else
 fi
 
 # プロンプト自動更新設定
-
+autoload -U is-at-least
 # $EPOCHSECONDS, strftime等を利用可能に
 zmodload zsh/datetime 
-
-autoload -U is-at-least
 
 reset_tmout() { 
     TMOUT=$[1-EPOCHSECONDS%1]
@@ -166,9 +171,10 @@ zstyle ':zle:*' word-style unspecified
 
 ## 補完候補の色づけ
 eval `dircolors`
-#export ZLS_COLORS=$LS_COLORS
-export LSCOLORS=gxfxcxdxbxegedabagacad
-export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+if [ -z $TMUX ]; then
+    export LSCOLORS=gxfxcxdxbxegedabagacad
+    export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+fi
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
@@ -191,7 +197,7 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
-# awscli補完機能有効化
+# awscli コマンドの補完機能有効化
 source /usr/local/bin/aws_zsh_completer.sh
 
 # 選択中の候補を塗りつぶす
@@ -280,7 +286,7 @@ function cd-up() {
 }
 
 zle -N cd-up
-bindkey "^A" cd-up
+bindkey "^X" cd-up
 
 bindkey "^S" clear-screen
 
@@ -311,11 +317,11 @@ abbrev-alias mkdir='mkdir -p'
 abbrev-alias t='tmux -2'
 
 if [ "$(uname)" = 'Darwin' ]; then
-        abbrev-alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-        abbrev-alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+        alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+        alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
-        abbrev-alias vi='/usr/bin/vi'
-        abbrev-alias vim='/usr/bin/vim'
+        alias vi='/usr/bin/vi'
+        alias vim='/usr/bin/vim'
 fi
 
 abbrev-alias nkf8='nkf -w --overwrite ./*'
@@ -382,6 +388,7 @@ function who() {
 }
 
 function see() {
+
     local HOST=`tail -n +5 /etc/hosts | peco | awk '{print $1}'`
     [[ -z $HOST ]] && return 1
 
@@ -425,3 +432,8 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
+########################################
+# zshrcをコンパイル確認
+if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+      zcompile ~/.zshrc
+fi
