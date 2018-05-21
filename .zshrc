@@ -46,9 +46,9 @@ if ! zplug check --verbose; then
     echo; zplug install
   fi
 fi
+
 # Then, source plugins and add commands to $PATH
 zplug load
-
 
 ########################################
 # Windows風のキーバインド
