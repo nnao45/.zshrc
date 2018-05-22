@@ -179,6 +179,9 @@ zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'c
 autoload -Uz compinit
 compinit
 
+#補完リストが多いときに尋ねない
+LISTMAX=1000
+
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
