@@ -427,6 +427,7 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
+
 ########################################
 # zshrcをコンパイル確認
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
