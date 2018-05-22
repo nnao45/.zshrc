@@ -286,11 +286,11 @@ function cd-up() {
     zle reset-prompt
 }
 zle -N cd-up
-bindkey "^X" cd-up
+bindkey "^Q" cd-up
 
 bindkey "^S" clear-screen
 
-bindkey "^Q" backward-kill-line
+bindkey "^X" backward-kill-line
 
 ########################################
 # エイリアス
