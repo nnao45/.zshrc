@@ -280,13 +280,17 @@ zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 function cd-up() { 
-    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+    echo
+    precmd
+    cd ..
+    zle reset-prompt
 }
-
 zle -N cd-up
 bindkey "^X" cd-up
 
 bindkey "^S" clear-screen
+
+bindkey "^Q" backward-kill-line
 
 ########################################
 # エイリアス
