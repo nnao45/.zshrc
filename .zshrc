@@ -5,6 +5,9 @@ export LANG=ja_JP.UTF-8
 export PATH=/usr/local/bin:$PATH
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
+#エディタをvimに設定
+export EDITORP=vim
+
 # Go言語の設定
 if [ "$(uname)" = 'Darwin' ]; then
     export GOBIN=/Users/${USER}/go/bin
@@ -39,6 +42,9 @@ zplug 'b4b4r07/gomi', as:command, from:gh-r
 # 略語を展開する
 zplug "momo-lab/zsh-abbrev-alias"
 
+# dockerコマンドの補完
+zplug "felixr/docker-zsh-completion"
+
 # Install plugins if there are plugins that have not been installed
 if ! zplug check --verbose; then
   printf "Install? [y/N]: "
@@ -46,22 +52,10 @@ if ! zplug check --verbose; then
     echo; zplug install
   fi
 fi
-
 # Then, source plugins and add commands to $PATH
 zplug load
 
-########################################
-# Windows風のキーバインド
-# Deleteキー
-bindkey "^[[3~" delete-char
-
-# Homeキー
-bindkey "^[[1~" beginning-of-line
-
-# Endキー
-bindkey "^[[4~" end-of-line
-
-########################################
+#######################################
 # プロンプトなどの設定
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -69,8 +63,8 @@ colors
 
 # ヒストリの設定
 HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
+HISTSIZE=10000
+SAVEHIST=10000
 
 # プロンプト
 
@@ -159,17 +153,13 @@ TRAPALRM() {
 }
 
 # 単語の区切り文字を指定する
-autoload -Uz select-word-style
-select-word-style default
-# ここで指定した文字は単語区切りとみなされる
-# / も区切りと扱うので、^W でディレクトリ１つ分を削除できる
-zstyle ':zle:*' word-chars " /=;@:{},|"
-zstyle ':zle:*' word-style unspecified
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 ## 補完候補の色づけ
 eval `dircolors`
 export LSCOLORS=gxfxcxdxbxegedabagacad
 export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+zstyle ':completion:*' verbose yes
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 
@@ -178,9 +168,6 @@ zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'c
 # 補完機能を有効にする
 autoload -Uz compinit
 compinit
-
-#補完リストが多いときに尋ねない
-LISTMAX=1000
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -230,6 +217,9 @@ setopt pushd_ignore_dups
 ## zsh の開始, 終了時刻をヒストリファイルに書き込む
 #setopt extended_history
 
+# シェルの終了を待たずにファイルにコマンド履歴を保存
+setopt inc_append_history
+
 # 同時に起動したzshの間でヒストリを共有する
 setopt share_history
 
@@ -252,13 +242,13 @@ setopt correct
 setopt list_packed 
 
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
-#setopt always_last_prompt
+setopt always_last_prompt
 
 # カッコの対応などを自動的に補完
 setopt auto_param_keys
 
 # 語の途中でもカーソル位置で補完
-#setopt complete_in_word
+setopt complete_in_word
 
 # フロー制御をやめる
 setopt no_flow_control
@@ -266,31 +256,43 @@ setopt no_flow_control
 # バックグラウンドジョブが終了したらすぐに知らせる
 setopt no_tify 
 
+# remove file mark
+unsetopt list_types
+
 ########################################
 # キーバインド
-# ヒストリー検索をpecoで。
+# Windows風のキーバインド
+# Deleteキー
+bindkey "^[[3~" delete-char
 
+# Homeキー
+bindkey "^[[1~" beginning-of-line
+
+# Endキー
+bindkey "^[[4~" end-of-line
+
+# ヒストリー検索をpecoで。
 peco-select-history() {
     BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
     CURSOR=${#BUFFER}
     zle reset-prompt
 }
-
 zle -N peco-select-history
 bindkey '^R' peco-select-history
 
+# cd up
 function cd-up() { 
-    echo
-    precmd
-    cd ..
-    zle reset-prompt
+    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
 }
 zle -N cd-up
-bindkey "^Q" cd-up
+bindkey "^X" cd-up
 
+# clear command
 bindkey "^S" clear-screen
 
-bindkey "^X" backward-kill-line
+# word forward
+bindkey "^F" forward-word
+bindkey "^B" backward-word
 
 ########################################
 # エイリアス
@@ -341,6 +343,9 @@ abbrev-alias -g and="|"
 
 # gomi
 abbrev-alias gm='gomi'
+
+# docker ps
+alias dps='docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -434,7 +439,6 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
-
 ########################################
 # zshrcをコンパイル確認
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
