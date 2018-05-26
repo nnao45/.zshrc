@@ -386,10 +386,6 @@ function tkillall() {
     tmux kill-server
 }
 
-function itsmine() {
-    chown 1051436384:1796141739 "$1" 
-}
-
 function who() {
     tail -n +5 /etc/hosts | grep --color "$1"
 }
