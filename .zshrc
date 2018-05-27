@@ -344,6 +344,14 @@ abbrev-alias -g and="|"
 # gomi
 abbrev-alias gm='gomi'
 
+# git command
+abbrev-alias ga='git add'
+abbrev-alias gaa='git add .'
+abbrev-alias gc='git commit -m'
+abbrev-alias gca='git commit -a -m'
+abbrev-alias gct='git commit -a -m "$(date +%Y-%m-%d_%H-%M-%S)"'
+abbrev-alias gp='git push'
+
 # docker ps
 alias dps='docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
 
