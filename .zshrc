@@ -336,6 +336,7 @@ abbrev-alias sudo='sudo '
 # グローバルエイリアス
 abbrev-alias -g L='| less'
 abbrev-alias -g G='| grep'
+abbrev-alias -g B='| bc'
 abbrev-alias tree="tree -NC"
 
 # パイプをandで書く。
@@ -367,9 +368,6 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     abbrev-alias -g C='| putclip'
 fi
-
-abbrev-alias -g L='| less'
-abbrev-alias -g B='| bc'
 
 ########################################
 # tmuxの設定
