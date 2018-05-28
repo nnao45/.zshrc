@@ -369,6 +369,10 @@ elif which putclip >/dev/null 2>&1 ; then
     abbrev-alias -g C='| putclip'
 fi
 
+# zmv
+autoload -Uz zmv
+alias zmv='noglob zmv -W'
+
 ########################################
 # tmuxの設定
 # 自動ロギング
