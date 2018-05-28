@@ -3,7 +3,10 @@
 
 export LANG=ja_JP.UTF-8
 export PATH=/usr/local/bin:$PATH
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+
+if [ "$(uname)" = 'Darwin' ]; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+fi
 
 #エディタをvimに設定
 export EDITORP=vim
