@@ -46,12 +46,12 @@ zplug "momo-lab/zsh-abbrev-alias"
 zplug "felixr/docker-zsh-completion"
 
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
-fi
+#if ! zplug check --verbose; then
+#  printf "Install? [y/N]: "
+#  if read -q; then
+#    echo; zplug install
+#  fi
+#fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
@@ -444,6 +444,12 @@ function pane() {
     fi
 }
 ########################################
+# その他
+#　ローカル設定のロード
+if [ -e　~/.zshrc_local  ]; then
+    source ~/.zshrc_local
+fi
+
 # zshrcをコンパイル確認
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
       zcompile ~/.zshrc
