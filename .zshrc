@@ -334,6 +334,7 @@ abbrev-alias nkf8='nkf -w --overwrite ./*'
 abbrev-alias sudo='sudo '
 
 # グローバルエイリアス
+alias less='less -R'
 abbrev-alias -g L='| less'
 abbrev-alias -g G='| grep'
 abbrev-alias -g B='| bc'
