@@ -330,6 +330,8 @@ fi
 
 abbrev-alias nkf8='nkf -w --overwrite ./*'
 
+abbrev-alias tailf='tail -f'
+
 # sudo の後のコマンドでエイリアスを有効にする
 abbrev-alias sudo='sudo '
 
