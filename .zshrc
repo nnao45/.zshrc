@@ -399,7 +399,6 @@ function who() {
 }
 
 function see() {
-
     local HOST=`tail -n +5 /etc/hosts | peco | awk '{print $1}'`
     [[ -z $HOST ]] && return 1
 
@@ -407,7 +406,11 @@ function see() {
     if echo "${HOST}" | grep '^#' > /dev/null; then
         echo "it's comment out"
     else
-        adssh ${HOST}
+        if type adssh >/dev/null 2>&1; then
+            adssh ${HOST} 
+        else
+            ssh ${HOST}
+        fi
     fi
 }
 
