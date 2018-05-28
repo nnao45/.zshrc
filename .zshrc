@@ -254,7 +254,7 @@ setopt complete_in_word
 setopt no_flow_control
 
 # バックグラウンドジョブが終了したらすぐに知らせる
-setopt no_tify 
+setopt notify 
 
 # remove file mark
 unsetopt list_types
@@ -285,7 +285,7 @@ function cd-up() {
     zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
 }
 zle -N cd-up
-bindkey "^X" cd-up
+bindkey "^P" cd-up
 
 # clear command
 bindkey "^S" clear-screen
@@ -367,6 +367,9 @@ elif which putclip >/dev/null 2>&1 ; then
     # Cygwin
     abbrev-alias -g C='| putclip'
 fi
+
+abbrev-alias -g L='| less'
+abbrev-alias -g B='| bc'
 
 ########################################
 # tmuxの設定
