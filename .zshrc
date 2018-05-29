@@ -360,6 +360,7 @@ abbrev-alias gp='git push'
 
 # docker ps
 alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
+abbrev-alias dimg='docker images'
 abbrev-alias drun='docker run'
 abbrev-alias drm='docker rm'
 abbrev-alias drrm='docker run -it --rm'
