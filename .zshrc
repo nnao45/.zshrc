@@ -359,7 +359,10 @@ abbrev-alias gco='git checkout'
 abbrev-alias gp='git push'
 
 # docker ps
-alias dps='docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
+alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
+abbrev-alias drun='docker run'
+abbrev-alias drm='docker rm'
+abbrev-alias drrm='docker run -it --rm'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
