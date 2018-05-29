@@ -3,10 +3,7 @@
 
 export LANG=ja_JP.UTF-8
 export PATH=/usr/local/bin:$PATH
-
-if [ "$(uname)" = 'Darwin' ]; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-fi
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
 #エディタをvimに設定
 export EDITORP=vim
@@ -354,9 +351,11 @@ abbrev-alias gm='gomi'
 # git command
 abbrev-alias ga='git add'
 abbrev-alias gaa='git add .'
+abbrev-alias gb='git brach'
 abbrev-alias gc='git commit -m'
 abbrev-alias gca='git commit -a -m'
 abbrev-alias gct='git commit -a -m "$(date +%Y-%m-%d_%H-%M-%S)"'
+abbrev-alias gco='git checkout'
 abbrev-alias gp='git push'
 
 # docker ps
