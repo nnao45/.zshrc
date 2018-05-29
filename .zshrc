@@ -294,6 +294,9 @@ bindkey "^S" clear-screen
 bindkey "^F" forward-word
 bindkey "^B" backward-word
 
+# kill line
+bindkey "^Q" kill-whole-line
+
 ########################################
 # エイリアス
 
