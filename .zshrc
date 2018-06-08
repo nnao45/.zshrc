@@ -8,22 +8,6 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 #エディタをvimに設定
 export EDITORP=vim
 
-# Go言語の設定
-if [ "$(uname)" = 'Darwin' ]; then
-    export GOBIN=/Users/${USER}/go/bin
-    export GOROOT=/Users/${USER}/go
-    export GOPATH=/Users/${USER}/go-third-party
-    export PATH=$PATH:/Users/${USER}/.nodebrew/current/bin
-else
-    export GOBIN=/usr/src/go/bin
-    export GOROOT=/usr/src/go
-    export GOPATH=/usr/src/go-third-party
-fi
-
-export PATH=$GOPATH/bin:$PATH
-export PATH=$GOROOT/bin:$PATH
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-
 #######################################
 # 外部プラグイン
 # zplug
@@ -168,6 +152,9 @@ zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'c
 # 補完機能を有効にする
 autoload -Uz compinit
 compinit
+
+# 補完数が多い場合に表示されるメッセージの表示を1000にする。
+LISTMAX=1000
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -327,13 +314,17 @@ if [ "$(uname)" = 'Darwin' ]; then
         alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
         alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
-        alias vi='/usr/bin/vi'
+        alias vi='/usr/bin/vim'
         alias vim='/usr/bin/vim'
 fi
+
+abbrev-alias purevi='/usr/bin/vi'
 
 abbrev-alias nkf8='nkf -w --overwrite ./*'
 
 abbrev-alias tailf='tail -f'
+
+abbrev-alias diff='colordiff -u'
 
 # sudo の後のコマンドでエイリアスを有効にする
 abbrev-alias sudo='sudo '
@@ -431,6 +422,22 @@ function see() {
     fi
 }
 
+function again() {
+    local HOST=`cat ~/.ssh/known_hosts | awk '{print $1}' | awk 'BEGIN {FS=",";OFS=","} {print $1}'  | peco`
+    [[ -z $HOST ]] && return 1
+
+     #commentout imple
+     if echo "${HOST}" | grep '^#' > /dev/null; then
+        echo "it's comment out"
+     else
+        if type adssh >/dev/null 2>&1; then
+            adssh ${HOST} 
+        else
+            ssh ${HOST}
+        fi      
+     fi
+}
+
 function pane() {
     ## get options ##
     while getopts :s opt
@@ -474,3 +481,5 @@ fi
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
       zcompile ~/.zshrc
 fi
+
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
