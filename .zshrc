@@ -29,13 +29,16 @@ zplug "momo-lab/zsh-abbrev-alias"
 # dockerコマンドの補完
 zplug "felixr/docker-zsh-completion"
 
+# Tracks your most used directories, based on 'frecency'.
+zplug "rupa/z", use:"*.sh"
+
 # Install plugins if there are plugins that have not been installed
-#if ! zplug check --verbose; then
-#  printf "Install? [y/N]: "
-#  if read -q; then
-#    echo; zplug install
-#  fi
-#fi
+if ! zplug check --verbose; then
+  printf "Install? [y/N]: "
+  if read -q; then
+    echo; zplug install
+  fi
+fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
@@ -265,7 +268,26 @@ peco-select-history() {
     zle reset-prompt
 }
 zle -N peco-select-history
-bindkey '^R' peco-select-history
+bindkey '^R' peco-select-histor
+
+# zをpecoで。
+function peco-z-search
+{
+  which peco z > /dev/null
+  if [ $? -ne 0 ]; then
+    echo "Please install peco and z"
+    return 1
+  fi
+  local res=$(z | sort -rn | cut -c 12- | peco)
+  if [ -n "$res" ]; then
+    BUFFER+="cd $res"
+    zle accept-line
+  else
+    return 1
+  fi
+}
+zle -N peco-z-search
+bindkey '^F' peco-z-search
 
 # cd up
 function cd-up() { 
@@ -278,7 +300,7 @@ bindkey "^P" cd-up
 bindkey "^S" clear-screen
 
 # word forward
-bindkey "^F" forward-word
+bindkey "^N" forward-word
 bindkey "^B" backward-word
 
 # kill line
@@ -482,4 +504,5 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
       zcompile ~/.zshrc
 fi
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
