@@ -33,12 +33,12 @@ zplug "felixr/docker-zsh-completion"
 zplug "rupa/z", use:"*.sh"
 
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-    echo; zplug install
-  fi
-fi
+#if ! zplug check --verbose; then
+#  printf "Install? [y/N]: "
+#  if read -q; then
+#    echo; zplug install
+#  fi
+#fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
@@ -268,11 +268,10 @@ peco-select-history() {
     zle reset-prompt
 }
 zle -N peco-select-history
-bindkey '^R' peco-select-histor
+bindkey '^R' peco-select-history
 
 # zをpecoで。
-function peco-z-search
-{
+peco-z-search() {
   which peco z > /dev/null
   if [ $? -ne 0 ]; then
     echo "Please install peco and z"
@@ -341,12 +340,11 @@ else
 fi
 
 abbrev-alias purevi='/usr/bin/vi'
-
 abbrev-alias nkf8='nkf -w --overwrite ./*'
-
 abbrev-alias tailf='tail -f'
-
 abbrev-alias diff='colordiff -u'
+abbrev-alias m='make'
+abbrev-alias tf='terraform'
 
 # sudo の後のコマンドでエイリアスを有効にする
 abbrev-alias sudo='sudo '
@@ -374,7 +372,7 @@ abbrev-alias gct='git commit -a -m "$(date +%Y-%m-%d_%H-%M-%S)"'
 abbrev-alias gco='git checkout'
 abbrev-alias gp='git push'
 
-# docker ps
+# docker
 alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
 abbrev-alias dimg='docker images'
 abbrev-alias drun='docker run'
