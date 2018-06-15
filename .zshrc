@@ -272,18 +272,18 @@ bindkey '^R' peco-select-history
 
 # zをpecoで。
 peco-z-search() {
-  which peco z > /dev/null
-  if [ $? -ne 0 ]; then
-    echo "Please install peco and z"
-    return 1
-  fi
-  local res=$(z | sort -rn | cut -c 12- | peco)
-  if [ -n "$res" ]; then
-    BUFFER+="cd $res"
-    zle accept-line
-  else
-    return 1
-  fi
+    which peco z > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Please install peco and z"
+        return 1
+    fi
+    local res=$(z | sort -rn | cut -c 12- | peco)
+    if [ -n "$res" ]; then
+        BUFFER+="cd $res"
+        zle accept-line
+    else
+        return 1
+    fi
 }
 zle -N peco-z-search
 bindkey '^F' peco-z-search
@@ -332,11 +332,11 @@ abbrev-alias mkdir='mkdir -p'
 abbrev-alias t='tmux -2'
 
 if [ "$(uname)" = 'Darwin' ]; then
-        alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-        alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+    alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+    alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
-        alias vi='/usr/bin/vim'
-        alias vim='/usr/bin/vim'
+    alias vi='/usr/bin/vim'
+    alias vim='/usr/bin/vim'
 fi
 
 abbrev-alias purevi='/usr/bin/vi'
@@ -377,6 +377,7 @@ alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.S
 abbrev-alias dimg='docker images'
 abbrev-alias drun='docker run'
 abbrev-alias drm='docker rm'
+abbrev-alias drmi='docker rmi'
 abbrev-alias drrm='docker run -it --rm'
 
 # C で標準出力をクリップボードにコピーする
@@ -499,8 +500,7 @@ fi
 
 # zshrcをコンパイル確認
 if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-      zcompile ~/.zshrc
+    zcompile ~/.zshrc
 fi
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
