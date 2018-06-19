@@ -399,9 +399,6 @@ alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
-# zsh起動時にtmux起動
-[[ -z "$TMUX" && ! -z "$PS1" ]] && exec tmux
-
 # 自動ロギング
 if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
     local LOGDIR=$HOME/Documents/term_logs
