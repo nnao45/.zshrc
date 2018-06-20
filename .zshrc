@@ -1,12 +1,14 @@
 ########################################
 # 環境変数
 
-export LANG=ja_JP.UTF-8
-export PATH=/usr/local/bin:$PATH
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+if [ -z $TMUX ]; then
+    export LANG=ja_JP.UTF-8
+    export PATH=/usr/local/bin:$PATH
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
-#エディタをvimに設定
-export EDITORP=vim
+    #エディタをvimに設定
+    export EDITORP=vim
+fi
 
 #######################################
 # 外部プラグイン
@@ -513,3 +515,4 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
 fi
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
