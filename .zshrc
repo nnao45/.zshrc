@@ -311,8 +311,10 @@ bindkey "^Q" kill-whole-line
 ########################################
 # エイリアス
 
-if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+#if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
+if type dircolors > /dev/null 2>&1; then
+    test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
+    abbrev-alias ls='ls --color=auto'
     abbrev-alias dir='dir --color=auto'
     abbrev-alias vdir='vdir --color=auto'
 
@@ -321,7 +323,6 @@ if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     abbrev-alias egrep='egrep --color=auto'
 fi
 
-abbrev-alias ls='ls --color=auto'
 abbrev-alias l='ls -CF'
 abbrev-alias la='ls -la'
 abbrev-alias ll='ls -l'
