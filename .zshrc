@@ -414,7 +414,7 @@ if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
     done
     [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
     tmux  set-option default-terminal "screen" \; \
-    pipe-pane        "cat >> $LOGDIR/$LOGFILE" \; \
+    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
     display-message  "💾Started logging to $LOGDIR/$LOGFILE"
 fi
 
