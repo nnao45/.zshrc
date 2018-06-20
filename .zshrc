@@ -320,7 +320,12 @@ if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     abbrev-alias egrep='egrep --color=auto'
 fi
 
-abbrev-alias ls='ls --color=auto'
+if [[ "$(uname)" = 'Darwin' ]] && [[ ! -z $TMUX ]]; then
+    abbrev-alias ls='ls -G'
+else
+    abbrev-alias ls='ls --color=auto'
+fi
+
 abbrev-alias l='ls -CF'
 abbrev-alias la='ls -la'
 abbrev-alias ll='ls -l'
