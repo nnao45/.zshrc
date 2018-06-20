@@ -4,11 +4,12 @@
 if [ -z $TMUX ]; then
     export LANG=ja_JP.UTF-8
     export PATH=/usr/local/bin:$PATH
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
     #エディタをvimに設定
     export EDITORP=vim
 fi
+
+export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 
 #######################################
 # 外部プラグイン
@@ -320,7 +321,7 @@ if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
     abbrev-alias egrep='egrep --color=auto'
 fi
 
-if [[ "$(uname)" = 'Darwin' ]] && [[ ! -z $TMUX ]]; then
+if [ "$(uname)" = 'Darwin' ]; then
     abbrev-alias ls='ls -G'
 else
     abbrev-alias ls='ls --color=auto'
@@ -338,7 +339,7 @@ abbrev-alias mkdir='mkdir -p'
 
 abbrev-alias t='tmux -2'
 
-if [ "$(uname)" = 'Darwin' ]; then
+if [[ "$(uname)" = 'Darwin' ]] ; then
     alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
     alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
@@ -520,4 +521,3 @@ if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
 fi
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
