@@ -313,7 +313,6 @@ bindkey "^Q" kill-whole-line
 ########################################
 # エイリアス
 
-#if [[ -x /usr/bin/dircolors ]] || [[ -x dircolors ]]; then
 if type dircolors > /dev/null 2>&1; then
     test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
     abbrev-alias ls='ls --color=auto'
@@ -406,7 +405,12 @@ alias zmv='noglob zmv -W'
 ########################################
 # tmuxの設定
 # 自動ロギング
-if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
+
+if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
+       brew install ansifilter
+fi
+
+if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]]; then
     local LOGDIR=$HOME/Documents/term_logs
     local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
     local FILECOUNT=0
