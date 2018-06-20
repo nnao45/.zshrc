@@ -9,7 +9,9 @@ if [ -z $TMUX ]; then
     export EDITORP=vim
 fi
 
-export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+if [[ "$(uname)" = 'Darwin' ]] ; then
+    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+fi
 
 #######################################
 # 外部プラグイン
