@@ -1,12 +1,21 @@
 ########################################
 # 環境変数
 
+# tmuxでなんども読み込まない為に。
 if [ -z $TMUX ]; then
     export LANG=ja_JP.UTF-8
     export PATH=/usr/local/bin:$PATH
 
     #エディタをvimに設定
     export EDITORP=vim
+
+    #tmuxinaotrの為に
+    export SHELL=zsh
+
+    # zshrcをコンパイル確認
+    if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+        zcompile ~/.zshrc
+    fi
 fi
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
@@ -157,10 +166,6 @@ zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'c
 
 ########################################
 # 補完
-# 補完機能を有効にする
-autoload -Uz compinit
-compinit
-
 # 補完数が多い場合に表示されるメッセージの表示を1000にする。
 LISTMAX=1000
 
@@ -511,14 +516,13 @@ function pane() {
 }
 ########################################
 # その他
-#　ローカル設定のロード
-if [ -e　~/.zshrc_local  ]; then
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# ローカルの設定を見る
+if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
 
-# zshrcをコンパイル確認
-if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-    zcompile ~/.zshrc
+# tmuxinaotrをロード
+if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
+    source ~/.tmuxinator/tmuxinator.zsh
 fi
-
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
