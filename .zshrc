@@ -514,6 +514,11 @@ function pane() {
         tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
+
+function change() {
+    sed -i -e "s@$1@$2@g" $3
+}
+
 ########################################
 # その他
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
