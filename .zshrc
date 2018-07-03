@@ -319,7 +319,7 @@ bindkey "^Q" kill-whole-line
 # エイリアス
 
 if type dircolors > /dev/null 2>&1; then
-    test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
+    #test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
     abbrev-alias ls='ls --color=auto'
     abbrev-alias dir='dir --color=auto'
     abbrev-alias vdir='vdir --color=auto'
@@ -404,8 +404,8 @@ elif which putclip >/dev/null 2>&1 ; then
 fi
 
 # zmv
-autoload -Uz zmv
-alias zmv='noglob zmv -W'
+#autoload -Uz zmv
+#alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
