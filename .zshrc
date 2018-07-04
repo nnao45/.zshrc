@@ -519,6 +519,18 @@ function change() {
     sed -i -e "s@$1@$2@g" $3
 }
 
+fucntion rktrant() {
+    local NOW_PATH=`pwd`
+    local RKT_PATH="/repo/rktrant/rkt/"
+    if [ -e　$RKT_PATH ]; then
+        cd $RKT_PATH
+        vagrant $1
+        cd $NOW_PATH
+    else
+        echo Please, \"git clone https://github.com/rkt/rkt.git $RKT_PATH\"
+    fi
+}
+
 ########################################
 # その他
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
