@@ -519,7 +519,7 @@ function change() {
     sed -i -e "s@$1@$2@g" $3
 }
 
-fucntion rktrant() {
+function rktrant() {
     local NOW_PATH=`pwd`
     local RKT_PATH="/repo/rktrant/rkt/"
     if [ -e　$RKT_PATH ]; then
