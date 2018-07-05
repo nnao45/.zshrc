@@ -404,8 +404,8 @@ elif which putclip >/dev/null 2>&1 ; then
 fi
 
 # zmv
-#autoload -Uz zmv
-#alias zmv='noglob zmv -W'
+autoload -Uz zmv
+alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
