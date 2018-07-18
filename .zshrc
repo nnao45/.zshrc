@@ -533,7 +533,7 @@ function rktrant() {
 
 ########################################
 # その他
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
