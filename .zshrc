@@ -339,7 +339,7 @@ abbrev-alias mv='mv -i'
 
 abbrev-alias mkdir='mkdir -p'
 
-abbrev-alias t='tmux -2'
+abbrev-alias t='tmux'
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
     alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
@@ -404,8 +404,8 @@ elif which putclip >/dev/null 2>&1 ; then
 fi
 
 # zmv
-autoload -Uz zmv
-alias zmv='noglob zmv -W'
+#autoload -Uz zmv
+#alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
@@ -451,7 +451,10 @@ function who() {
 }
 
 function see() {
-    local HOST=`tail -n +5 /etc/hosts | peco | awk '{print $1}'`
+    local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
+    local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
+    local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
+    local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
     [[ -z $HOST ]] && return 1
 
     #commentout imple
@@ -459,9 +462,11 @@ function see() {
         echo "it's comment out"
     else
         if type adssh >/dev/null 2>&1; then
-            adssh ${HOST} 
+            adssh ${HOST_IP}
+            echo adssh ${HIS_LINE} >> ~/.zsh_history
         else
-            ssh ${HOST}
+            ssh ${HOST_IP}
+            echo ssh ${HIS_LINE} >> ~/.zsh_history
         fi
     fi
 }
@@ -533,12 +538,13 @@ function rktrant() {
 
 ########################################
 # その他
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
 
 # tmuxinaotrをロード
-if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
-    source ~/.tmuxinator/tmuxinator.zsh
-fi
+#if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
+#    source ~/.tmuxinator/tmuxinator.zsh
+#fi
