@@ -533,7 +533,6 @@ function rktrant() {
 
 ########################################
 # その他
-
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
