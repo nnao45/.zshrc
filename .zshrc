@@ -543,7 +543,3 @@ if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
 
-# tmuxinaotrをロード
-#if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
-#    source ~/.tmuxinator/tmuxinator.zsh
-#fi
