@@ -404,8 +404,8 @@ elif which putclip >/dev/null 2>&1 ; then
 fi
 
 # zmv
-#autoload -Uz zmv
-#alias zmv='noglob zmv -W'
+autoload -Uz zmv
+alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
@@ -524,6 +524,11 @@ function change() {
     sed -i -e "s@$1@$2@g" $3
 }
 
+function delete-zcomdump() {
+    rm -f ~/.zcomdump*
+    rm -f ~/.zplug/zcomdump*
+}
+
 function rktrant() {
     local NOW_PATH=`pwd`
     local RKT_PATH="/repo/rktrant/rkt/"
@@ -538,7 +543,13 @@ function rktrant() {
 
 ########################################
 # その他
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
     source ~/.zshrc_local
 fi
+
+# tmuxinaotrをロード
+#if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
+#    source ~/.tmuxinator/tmuxinator.zsh
+#fi
