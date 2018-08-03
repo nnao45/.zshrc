@@ -437,24 +437,6 @@ fi
 
 ########################################
 # 自作関数の設定
-function logger(){
-    local LOGDIR=$HOME/Documents/term_logs
-    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
-    local FILECOUNT=0
-    local MAXFILECOUNT=2000
-    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
-    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
-        FILECOUNT=`expr $FILECOUNT + 1`
-        if [ $FILECOUNT -gt $MAXFILECOUNT ]; then
-            rm -f $file
-        fi
-    done
-    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
-    tmux  set-option default-terminal "screen" \; \
-    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
-    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-}
-
 function tkill() {
     tmux kill-session -t "$1"
 }
