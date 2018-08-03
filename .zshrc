@@ -41,7 +41,7 @@ zplug 'b4b4r07/gomi', as:command, from:gh-r
 zplug "momo-lab/zsh-abbrev-alias"
 
 # dockerコマンドの補完
-zplug "felixr/docker-zsh-completion"
+#zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh"
@@ -409,12 +409,32 @@ alias zmv='noglob zmv -W'
 
 ########################################
 # tmuxの設定
-# 自動ロギング
+# ロギングで使うモジュールの確認
 if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
        brew install ansifilter
 fi
 
-if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]]; then
+#if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]]; then
+#    local LOGDIR=$HOME/Documents/term_logs
+#    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
+#    local FILECOUNT=0
+#    local MAXFILECOUNT=2000
+#    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
+#    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
+#        FILECOUNT=`expr $FILECOUNT + 1`
+#        if [ $FILECOUNT -gt $MAXFILECOUNT ]; then
+#            rm -f $file
+#        fi
+#    done
+#    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
+#    tmux  set-option default-terminal "screen" \; \
+#    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
+#    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
+#fi
+
+########################################
+# 自作関数の設定
+function logger(){
     local LOGDIR=$HOME/Documents/term_logs
     local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
     local FILECOUNT=0
@@ -430,10 +450,8 @@ if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]]; then
     tmux  set-option default-terminal "screen" \; \
     pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
     display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-fi
+}
 
-########################################
-# 自作関数の設定
 function sk() {
     mkdir "$1" ; touch "$1"/"$1.scala"
 }
@@ -553,3 +571,4 @@ fi
 #if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
 #    source ~/.tmuxinator/tmuxinator.zsh
 #fi
+
