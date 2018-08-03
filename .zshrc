@@ -315,6 +315,27 @@ bindkey "^B" backward-word
 # kill line
 bindkey "^Q" kill-whole-line
 
+function logger(){
+    local LOGDIR=$HOME/Documents/term_logs
+    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
+    local FILECOUNT=0
+    local MAXFILECOUNT=2000
+    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
+    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
+        FILECOUNT=`expr $FILECOUNT + 1`
+        if [ $FILECOUNT -gt $MAXFILECOUNT ]; then
+            rm -f $file
+        fi
+    done
+    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
+    tmux  set-option default-terminal "screen" \; \
+    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
+    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
+}
+zle -N logger
+bindkey '^L' logger
+
+
 ########################################
 # エイリアス
 
@@ -434,20 +455,12 @@ function logger(){
     display-message  "💾Started logging to $LOGDIR/$LOGFILE"
 }
 
-function sk() {
-    mkdir "$1" ; touch "$1"/"$1.scala"
-}
-
 function tkill() {
     tmux kill-session -t "$1"
 }
 
 function tkillall() { 
     tmux kill-server
-}
-
-function who() {
-    tail -n +5 /etc/hosts | grep --color "$1"
 }
 
 function see() {
@@ -469,22 +482,6 @@ function see() {
             echo ssh ${HIS_LINE} >> ~/.zsh_history
         fi
     fi
-}
-
-function again() {
-    local HOST=`cat ~/.ssh/known_hosts | awk '{print $1}' | awk 'BEGIN {FS=",";OFS=","} {print $1}'  | peco`
-    [[ -z $HOST ]] && return 1
-
-     #commentout imple
-     if echo "${HOST}" | grep '^#' > /dev/null; then
-        echo "it's comment out"
-     else
-        if type adssh >/dev/null 2>&1; then
-            adssh ${HOST} 
-        else
-            ssh ${HOST}
-        fi      
-     fi
 }
 
 function pane() {
@@ -520,25 +517,9 @@ function pane() {
     fi
 }
 
-function change() {
-    sed -i -e "s@$1@$2@g" $3
-}
-
 function delete-zcomdump() {
     rm -f ~/.zcomdump*
     rm -f ~/.zplug/zcomdump*
-}
-
-function rktrant() {
-    local NOW_PATH=`pwd`
-    local RKT_PATH="/repo/rktrant/rkt/"
-    if [ -e　$RKT_PATH ]; then
-        cd $RKT_PATH
-        vagrant $1
-        cd $NOW_PATH
-    else
-        echo Please, \"git clone https://github.com/rkt/rkt.git $RKT_PATH\"
-    fi
 }
 
 ########################################
