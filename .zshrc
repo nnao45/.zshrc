@@ -56,6 +56,11 @@ zplug "rupa/z", use:"*.sh"
 # Then, source plugins and add commands to $PATH
 zplug load
 
+# ロギングで使うモジュールの確認
+if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
+  brew install ansifilter
+fi
+
 #######################################
 # プロンプトなどの設定
 # 色を使用出来るようにする
@@ -314,27 +319,6 @@ bindkey "^B" backward-word
 
 # kill line
 bindkey "^Q" kill-whole-line
-
-function logger(){
-    local LOGDIR=$HOME/Documents/term_logs
-    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S_%N.log)
-    local FILECOUNT=0
-    local MAXFILECOUNT=2000
-    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
-    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
-        FILECOUNT=`expr $FILECOUNT + 1`
-        if [ $FILECOUNT -gt $MAXFILECOUNT ]; then
-            rm -f $file
-        fi
-    done
-    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
-    tmux  set-option default-terminal "screen" \; \
-    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
-    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-}
-zle -N logger
-bindkey '^L' logger
-
 
 ########################################
 # エイリアス
