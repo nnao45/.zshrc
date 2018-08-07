@@ -286,29 +286,29 @@ zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # zをpecoで。
-peco-z-search() {
-    which peco z > /dev/null
-    if [ $? -ne 0 ]; then
-        echo "Please install peco and z"
-        return 1
-    fi
-    local res=$(z | sort -rn | cut -c 12- | peco)
-    if [ -n "$res" ]; then
-        BUFFER+="cd $res"
-        zle accept-line
-    else
-        return 1
-    fi
-}
-zle -N peco-z-search
-bindkey '^F' peco-z-search
+#peco-z-search() {
+#    which peco z > /dev/null
+#    if [ $? -ne 0 ]; then
+#        echo "Please install peco and z"
+#        return 1
+#    fi
+#    local res=$(z | sort -rn | cut -c 12- | peco)
+#    if [ -n "$res" ]; then
+#        BUFFER+="cd $res"
+#        zle accept-line
+#    else
+#        return 1
+#    fi
+#}
+#zle -N peco-z-search
+#bindkey '^F' peco-z-search
 
 # cd up
-function cd-up() { 
-    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
-}
-zle -N cd-up
-bindkey "^P" cd-up
+#function cd-up() { 
+#    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+#}
+#zle -N cd-up
+#bindkey "^P" cd-up
 
 # clear command
 bindkey "^S" clear-screen
