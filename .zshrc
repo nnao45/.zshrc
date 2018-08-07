@@ -44,7 +44,7 @@ zplug "momo-lab/zsh-abbrev-alias"
 #zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
-zplug "rupa/z", use:"*.sh"
+#zplug "rupa/z", use:"*.sh"
 
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
@@ -97,9 +97,9 @@ precmd() {
   fi
 
   if [ "$(uname)" = 'Darwin' ]; then
-    local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
+  	local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
   else
-    local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}'
+  	local left=$'%{\e[38;5;083m%}%n@%m%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}'
   fi
   local right="${vcs_info_msg_0_} "
 
@@ -115,9 +115,9 @@ precmd() {
 }
 
 if [ "$(uname)" = 'Darwin' ]; then
-  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
+    PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
 else
-  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
+    PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
 if [ "$(uname)" = 'Darwin' ]; then
@@ -132,30 +132,30 @@ autoload -U is-at-least
 zmodload zsh/datetime 
 
 reset_tmout() { 
-  TMOUT=$[1-EPOCHSECONDS%1]
+    TMOUT=$[1-EPOCHSECONDS%1]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
 reset_lastcomp() { 
-  _lastcomp=() 
+    _lastcomp=() 
 }
 
 if is-at-least 5.1; then
-  # avoid menuselect to be cleared by reset-prompt
-  redraw_tmout() {
-    [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
-    reset_tmout
-  }
-  else
-  # evaluating $WIDGET in TMOUT may crash :(
-  redraw_tmout() { 
-    zle reset-prompt; reset_tmout 
-  }
+    # avoid menuselect to be cleared by reset-prompt
+    redraw_tmout() {
+        [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
+        reset_tmout
+    }
+else
+    # evaluating $WIDGET in TMOUT may crash :(
+    redraw_tmout() { 
+        zle reset-prompt; reset_tmout 
+    }
 fi
 
 TRAPALRM() { 
-  redraw_tmout 
+    redraw_tmout 
 }
 
 # 単語の区切り文字を指定する
@@ -278,34 +278,34 @@ bindkey "^[[4~" end-of-line
 
 # ヒストリー検索をpecoで。
 peco-select-history() {
-  BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
-  CURSOR=${#BUFFER}
-  zle reset-prompt
+    BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+    CURSOR=${#BUFFER}
+    zle reset-prompt
 }
 zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # zをpecoで。
 peco-z-search() {
-  which peco z > /dev/null
-  if [ $? -ne 0 ]; then
-    echo "Please install peco and z"
-    return 1
-  fi
-  local res=$(z | sort -rn | cut -c 12- | peco)
-  if [ -n "$res" ]; then
-    BUFFER+="cd $res"
-    zle accept-line
-  else
-    return 1
-  fi
+    which peco z > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Please install peco and z"
+        return 1
+    fi
+    local res=$(z | sort -rn | cut -c 12- | peco)
+    if [ -n "$res" ]; then
+        BUFFER+="cd $res"
+        zle accept-line
+    else
+        return 1
+    fi
 }
 zle -N peco-z-search
 bindkey '^F' peco-z-search
 
 # cd up
 function cd-up() { 
-  zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
 }
 zle -N cd-up
 bindkey "^P" cd-up
@@ -324,12 +324,14 @@ bindkey "^Q" kill-whole-line
 # エイリアス
 
 if type dircolors > /dev/null 2>&1; then
-  abbrev-alias ls='ls --color=auto'
-  abbrev-alias dir='dir --color=auto'
-  abbrev-alias vdir='vdir --color=auto'
-  abbrev-alias grep='grep --color=auto'
-  abbrev-alias fgrep='fgrep --color=auto'
-  abbrev-alias egrep='egrep --color=auto'
+    #test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
+    abbrev-alias ls='ls --color=auto'
+    abbrev-alias dir='dir --color=auto'
+    abbrev-alias vdir='vdir --color=auto'
+
+    abbrev-alias grep='grep --color=auto'
+    abbrev-alias fgrep='fgrep --color=auto'
+    abbrev-alias egrep='egrep --color=auto'
 fi
 
 abbrev-alias l='ls -CF'
@@ -345,11 +347,11 @@ abbrev-alias mkdir='mkdir -p'
 abbrev-alias t='tmux'
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
-  alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-  alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+    alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+    alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
 else
-  alias vi='/usr/bin/vim'
-  alias vim='/usr/bin/vim'
+    alias vi='/usr/bin/vim'
+    alias vim='/usr/bin/vim'
 fi
 
 abbrev-alias purevi='/usr/bin/vi'
@@ -396,14 +398,14 @@ abbrev-alias drrm='docker run -it --rm'
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
-  # Mac
-  abbrev-alias -g C='| pbcopy'
+    # Mac
+    abbrev-alias -g C='| pbcopy'
 elif which xsel >/dev/null 2>&1 ; then
-  # Linux
-  abbrev-alias -g C='| xsel --input --clipboard'
+    # Linux
+    abbrev-alias -g C='| xsel --input --clipboard'
 elif which putclip >/dev/null 2>&1 ; then
-  # Cygwin
-  abbrev-alias -g C='| putclip'
+    # Cygwin
+    abbrev-alias -g C='| putclip'
 fi
 
 # zmv
@@ -414,76 +416,76 @@ alias zmv='noglob zmv -W'
 # tmuxの設定
 # ロギングで使うモジュールの確認
 if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
-  brew install ansifilter
+       brew install ansifilter
 fi
 
 ########################################
 # 自作関数の設定
 function tkill() {
-  tmux kill-session -t "$1"
+    tmux kill-session -t "$1"
 }
 
 function tkillall() { 
-  tmux kill-server
+    tmux kill-server
 }
 
 function see() {
-  local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
-  local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
-  local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
-  local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
-  [[ -z $HOST ]] && return 1
+    local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
+    local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
+    local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
+    local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
+    [[ -z $HOST ]] && return 1
 
-  #commentout imple
-  if echo "${HOST}" | grep '^#' > /dev/null; then
-    echo "it's comment out"
-  else
-    if type adssh >/dev/null 2>&1; then
-      adssh ${HOST_IP}
-      echo adssh ${HIS_LINE} >> ~/.zsh_history
+    #commentout imple
+    if echo "${HOST}" | grep '^#' > /dev/null; then
+        echo "it's comment out"
     else
-      ssh ${HOST_IP}
-      echo ssh ${HIS_LINE} >> ~/.zsh_history
+        if type adssh >/dev/null 2>&1; then
+            adssh ${HOST_IP}
+            echo adssh ${HIS_LINE} >> ~/.zsh_history
+        else
+            ssh ${HOST_IP}
+            echo ssh ${HIS_LINE} >> ~/.zsh_history
+        fi
     fi
-  fi
 }
 
 function pane() {
-  ## get options ##
-  while getopts :s opt
-  do
-  case $opt in
-    "s" ) readonly FLG_S="TRUE" ;;
-    * ) usage; exit 1 ;;
-  esac
-  done
+    ## get options ##
+    while getopts :s opt
+    do
+    case $opt in
+	    "s" ) readonly FLG_S="TRUE" ;;
+	    * ) usage; exit 1 ;;
+    esac
+    done
 
-  shift `expr $OPTIND - 1`
+    shift `expr $OPTIND - 1`
 
-  ## tmux pane split ##
-  if [ $1 ]; then
+    ## tmux pane split ##
+    if [ $1 ]; then
     cnt_pane=1
     while [ $cnt_pane -lt $1 ]
     do
-      if [ $(( $cnt_pane & 1 )) ]; then
-        tmux split-window -h
-      else
-        tmux split-window -v
-      fi
-      tmux select-layout tiled 1>/dev/null
-      cnt_pane=$(( $cnt_pane + 1 ))
+    if [ $(( $cnt_pane & 1 )) ]; then
+ 	    tmux split-window -h
+    else
+ 	    tmux split-window -v
+    fi
+    tmux select-layout tiled 1>/dev/null
+    cnt_pane=$(( $cnt_pane + 1 ))
     done
-  fi
+    fi
 
-  #OPTION: start session with "synchronized-panes"
-  if [ "$FLG_S" = "TRUE" ]; then
-    tmux set-window-option synchronize-panes 1>/dev/null
-  fi
+    #OPTION: start session with "synchronized-panes"
+    if [ "$FLG_S" = "TRUE" ]; then
+        tmux set-window-option synchronize-panes 1>/dev/null
+    fi
 }
 
 function delete-zcomdump() {
-  rm -f ~/.zcomdump*
-  rm -f ~/.zplug/zcomdump*
+    rm -f ~/.zcomdump*
+    rm -f ~/.zplug/zcomdump*
 }
 
 ########################################
@@ -491,7 +493,7 @@ function delete-zcomdump() {
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
-  source ~/.zshrc_local
+    source ~/.zshrc_local
 fi
 
 # tmuxinaotrをロード
