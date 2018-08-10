@@ -18,10 +18,6 @@ if [ -z $TMUX ]; then
     fi
 fi
 
-if [[ "$(uname)" = 'Darwin' ]] ; then
-    export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-fi
-
 #######################################
 # 外部プラグイン
 # zplug
@@ -325,7 +321,7 @@ bindkey "^Q" kill-whole-line
 
 if type dircolors > /dev/null 2>&1; then
     #test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
-    abbrev-alias ls='ls --color=auto'
+    abbrev-alias ls='ls -G'
     abbrev-alias dir='dir --color=auto'
     abbrev-alias vdir='vdir --color=auto'
 
@@ -434,10 +430,10 @@ function see() {
     local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
     local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
     local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
-    [[ -z $HOST ]] && return 1
+    [[ -z $HOST_LINE ]] && return 1
 
     #commentout imple
-    if echo "${HOST}" | grep '^#' > /dev/null; then
+    if echo "${HOST_LINE}" | grep '^#' > /dev/null; then
         echo "it's comment out"
     else
         if type adssh >/dev/null 2>&1; then
@@ -450,42 +446,9 @@ function see() {
     fi
 }
 
-function pane() {
-    ## get options ##
-    while getopts :s opt
-    do
-    case $opt in
-	    "s" ) readonly FLG_S="TRUE" ;;
-	    * ) usage; exit 1 ;;
-    esac
-    done
-
-    shift `expr $OPTIND - 1`
-
-    ## tmux pane split ##
-    if [ $1 ]; then
-    cnt_pane=1
-    while [ $cnt_pane -lt $1 ]
-    do
-    if [ $(( $cnt_pane & 1 )) ]; then
- 	    tmux split-window -h
-    else
- 	    tmux split-window -v
-    fi
-    tmux select-layout tiled 1>/dev/null
-    cnt_pane=$(( $cnt_pane + 1 ))
-    done
-    fi
-
-    #OPTION: start session with "synchronized-panes"
-    if [ "$FLG_S" = "TRUE" ]; then
-        tmux set-window-option synchronize-panes 1>/dev/null
-    fi
-}
-
 function delete-zcomdump() {
-    rm -f ~/.zcomdump*
-    rm -f ~/.zplug/zcomdump*
+    rm -f ~/.zcomdump
+    rm -f ~/.zplug/zcomdump
 }
 
 ########################################
