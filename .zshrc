@@ -40,7 +40,7 @@ zplug "momo-lab/zsh-abbrev-alias"
 #zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
-#zplug "rupa/z", use:"*.sh"
+zplug "rupa/z", use:"*.sh"
 
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
@@ -158,7 +158,7 @@ TRAPALRM() {
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 
 ## 補完候補の色づけ
-eval `dircolors`
+#eval `dircolors`
 export LSCOLORS=gxfxcxdxbxegedabagacad
 export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
 zstyle ':completion:*' verbose yes
@@ -282,22 +282,22 @@ zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # zをpecoで。
-#peco-z-search() {
-#    which peco z > /dev/null
-#    if [ $? -ne 0 ]; then
-#        echo "Please install peco and z"
-#        return 1
-#    fi
-#    local res=$(z | sort -rn | cut -c 12- | peco)
-#    if [ -n "$res" ]; then
-#        BUFFER+="cd $res"
-#        zle accept-line
-#    else
-#        return 1
-#    fi
-#}
-#zle -N peco-z-search
-#bindkey '^F' peco-z-search
+peco-z-search() {
+    which peco z > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Please install peco and z"
+        return 1
+    fi
+    local res=$(z | sort -rn | cut -c 12- | peco)
+    if [ -n "$res" ]; then
+        BUFFER+="cd $res"
+        zle accept-line
+    else
+        return 1
+    fi
+}
+zle -N peco-z-search
+bindkey '^F' peco-z-search
 
 # cd up
 #function cd-up() { 
@@ -329,6 +329,8 @@ if type dircolors > /dev/null 2>&1; then
     abbrev-alias fgrep='fgrep --color=auto'
     abbrev-alias egrep='egrep --color=auto'
 fi
+
+abbrev-alias ls='ls -G'
 
 abbrev-alias l='ls -CF'
 abbrev-alias la='ls -la'
@@ -443,6 +445,39 @@ function see() {
             ssh ${HOST_IP}
             echo ssh ${HIS_LINE} >> ~/.zsh_history
         fi
+    fi
+}
+
+function pane() {
+    ## get options ##
+    while getopts :s opt
+    do
+    case $opt in
+	    "s" ) readonly FLG_S="TRUE" ;;
+	    * ) usage; exit 1 ;;
+    esac
+    done
+
+    shift `expr $OPTIND - 1`
+
+    ## tmux pane split ##
+    if [ $1 ]; then
+    cnt_pane=1
+    while [ $cnt_pane -lt $1 ]
+    do
+    if [ $(( $cnt_pane & 1 )) ]; then
+ 	    tmux split-window -h
+    else
+ 	    tmux split-window -v
+    fi
+    tmux select-layout tiled 1>/dev/null
+    cnt_pane=$(( $cnt_pane + 1 ))
+    done
+    fi
+
+    #OPTION: start session with "synchronized-panes"
+    if [ "$FLG_S" = "TRUE" ]; then
+        tmux set-window-option synchronize-panes 1>/dev/null
     fi
 }
 
