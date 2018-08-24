@@ -486,6 +486,10 @@ function delete-zcomdump() {
     rm -f ~/.zplug/zcomdump
 }
 
+function calc-zsh() {
+    time (zsh -i -c exit)
+}
+
 ########################################
 # その他
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
