@@ -52,9 +52,9 @@ zplug "rupa/z", use:"*.sh"
 # Then, source plugins and add commands to $PATH
 zplug load
 
-# ロギングで使うモジュールの確認
-if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
-  brew install ansifilter
+if which ansifilter >/dev/null 2>&1; then
+else
+    echo "If you wanto use logging, Please install ansifilter"
 fi
 
 #######################################
@@ -283,8 +283,8 @@ bindkey '^R' peco-select-history
 
 # zをpecoで。
 peco-z-search() {
-    which peco z > /dev/null
-    if [ $? -ne 0 ]; then
+    if which peco z >/dev/null 2>&1; then
+    else
         echo "Please install peco and z"
         return 1
     fi
@@ -319,17 +319,6 @@ bindkey "^Q" kill-whole-line
 ########################################
 # エイリアス
 
-if type dircolors > /dev/null 2>&1; then
-    #test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
-    abbrev-alias ls='ls -G'
-    abbrev-alias dir='dir --color=auto'
-    abbrev-alias vdir='vdir --color=auto'
-
-    abbrev-alias grep='grep --color=auto'
-    abbrev-alias fgrep='fgrep --color=auto'
-    abbrev-alias egrep='egrep --color=auto'
-fi
-
 abbrev-alias ls='ls -G'
 
 abbrev-alias l='ls -CF'
@@ -345,11 +334,21 @@ abbrev-alias mkdir='mkdir -p'
 abbrev-alias t='tmux'
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
-    alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
-    alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+  alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+  alias vim='env_LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
+  abbrev-alias ls='ls -G'
 else
-    alias vi='/usr/bin/vim'
-    alias vim='/usr/bin/vim'
+  alias vi='/usr/bin/vim'
+  alias vim='/usr/bin/vim'
+  if which dircolors > /dev/null 2>&1; then
+    test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
+    abbrev-alias ls='ls --color=auto'
+    abbrev-alias dir='dir --color=auto'
+    abbrev-alias vdir='vdir --color=auto'
+    abbrev-alias grep='grep --color=auto'
+    abbrev-alias fgrep='fgrep --color=auto'
+    abbrev-alias egrep='egrep --color=auto'
+  fi
 fi
 
 abbrev-alias purevi='/usr/bin/vi'
@@ -435,10 +434,10 @@ function see() {
     [[ -z $HOST_LINE ]] && return 1
 
     #commentout imple
-    if echo "${HOST_LINE}" | grep '^#' > /dev/null; then
+    if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
         echo "it's comment out"
     else
-        if type adssh >/dev/null 2>&1; then
+        if which adssh >/dev/null 2>&1; then
             adssh ${HOST_IP}
             echo adssh ${HIS_LINE} >> ~/.zsh_history
         else
