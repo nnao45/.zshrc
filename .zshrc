@@ -237,7 +237,7 @@ setopt hist_reduce_blanks
 setopt extended_glob
 
 # コマンド訂正
-setopt correct
+#setopt correct
 
 # 補完候補を詰めて表示する
 setopt list_packed 
