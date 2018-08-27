@@ -23,7 +23,7 @@ fi
 # zplug
 source ~/.zplug/init.zsh
 
-# 構文のハイライト(https://github.com/zsh-users/zsh-syntax-highlighting)
+# 構文のハイライト(https://github.com/zdharma/fast-syntax-highlighting)
 zplug "zdharma/fast-syntax-highlighting", defer:2 
 # タイプ補完
 zplug "zsh-users/zsh-autosuggestions"
