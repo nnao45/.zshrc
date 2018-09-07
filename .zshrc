@@ -426,7 +426,31 @@ function tkillall() {
     tmux kill-server
 }
 
+function logger() {
+    local LOGDIR=$HOME/Documents/term_logs
+    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S.log)
+    local FILECOUNT=0
+    local MAXFILECOUNT=500
+    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
+    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
+        FILECOUNT=`expr $FILECOUNT + 1`
+        if [ $FILECOUNT -ge $MAXFILECOUNT ]; then
+            rm -f $file
+        fi
+    done
+    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
+    tmux  set-option default-terminal "screen" \; \
+    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
+    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
+}
+
 function see() {
+    local -A opthash
+    zparseopts -D -A opthash -- -log
+    if [[ -n "${opthash[(i)--log]}" ]]; then
+        # --logが指定された場合
+        logger
+    fi
     local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
     local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
     local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
@@ -487,6 +511,10 @@ function delete-zcomdump() {
 
 function calc-zsh() {
     time (zsh -i -c exit)
+}
+
+function report-zsh() {
+    for i in $(seq 1 10); do /usr/bin/time zsh -i -c exit; done 
 }
 
 ########################################
