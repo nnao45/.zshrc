@@ -52,11 +52,6 @@ zplug "rupa/z", use:"*.sh"
 # Then, source plugins and add commands to $PATH
 zplug load
 
-if which ansifilter >/dev/null 2>&1; then
-else
-    echo "If you wanto use logging, Please install ansifilter"
-fi
-
 #######################################
 # プロンプトなどの設定
 # 色を使用出来るようにする
@@ -496,7 +491,7 @@ function calc-zsh() {
 }
 
 function report-zsh() {
-    for i in $(seq 1 10); do /usr/bin/time zsh -i -c exit; done 
+    for i in $(seq 1 10); do time zsh -i -c exit; done 
 }
 
 ########################################
