@@ -15,5 +15,5 @@ done
 tmux  set-option default-terminal "screen" \; \
 pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
 display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-$1 $2
+env LANG=C ssh -o StrictHostKeyChecking=no $@
 tmux pipe-pane\; display-message  "🔔End logging to $LOGDIR/$LOGFILE"
