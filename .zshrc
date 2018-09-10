@@ -77,14 +77,14 @@ precmd() {
   autoload -Uz add-zsh-hook
 
   if [ "$(uname)" = 'Darwin' ]; then
-  zstyle ':vcs_info:git:*' check-for-changes true
-  zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-  zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
-  zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
-  zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
+    zstyle ':vcs_info:git:*' check-for-changes true
+    zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+    zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
+    zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
   else
-  zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
-  zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
+    zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
   fi
 
   if [ "$(uname)" = 'Darwin' ]; then
@@ -135,7 +135,7 @@ reset_lastcomp() {
 if is-at-least 5.1; then
   # avoid menuselect to be cleared by reset-prompt
   redraw_tmout() {
-    [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
+  [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
     reset_tmout
   }
 else
@@ -426,8 +426,8 @@ function see() {
   zparseopts -D -A opthash -- -log
   local LOG_FLAG=""
   if [[ -n "${opthash[(i)--log]}" ]]; then
-  # --logが指定された場合
-  LOG_FLAG="true"
+    # --logが指定された場合
+    LOG_FLAG="true"
   fi
   local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
   local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
@@ -437,15 +437,15 @@ function see() {
 
   local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
   if [[ ! -z $LOG_FLAG  ]]; then
-  SSH_CMD="~/.zsh_logssh"
+    SSH_CMD="~/.zsh_logssh"
   fi
 
   #commentout imple
   if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
-  echo "it's comment out"
+    echo "it's comment out"
   else
-  eval ${SSH_CMD} ${HOST_NAME}
-  echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
+    eval ${SSH_CMD} ${HOST_NAME}
+    echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
   fi
 }
 
@@ -454,8 +454,8 @@ function pane() {
   while getopts :s opt
   do
   case $opt in
-  "s" ) readonly FLG_S="TRUE" ;;
-  * ) usage; exit 1 ;;
+    "s" ) readonly FLG_S="TRUE" ;;
+    * ) usage; exit 1 ;;
   esac
   done
 
@@ -463,22 +463,22 @@ function pane() {
 
   ## tmux pane split ##
   if [ $1 ]; then
-  cnt_pane=1
-  while [ $cnt_pane -lt $1 ]
-  do
-  if [ $(( $cnt_pane & 1 )) ]; then
-    tmux split-window -h
-  else
- 	  tmux split-window -v
-  fi
-  tmux select-layout tiled 1>/dev/null
-  cnt_pane=$(( $cnt_pane + 1 ))
-  done
+    cnt_pane=1
+    while [ $cnt_pane -lt $1 ]
+    do
+    if [ $(( $cnt_pane & 1 )) ]; then
+      tmux split-window -h
+    else
+ 	    tmux split-window -v
+    fi
+    tmux select-layout tiled 1>/dev/null
+    cnt_pane=$(( $cnt_pane + 1 ))
+    done
   fi
 
   #OPTION: start session with "synchronized-panes"
   if [ "$FLG_S" = "TRUE" ]; then
-  tmux set-window-option synchronize-panes 1>/dev/null
+    tmux set-window-option synchronize-panes 1>/dev/null
   fi
 }
 
