@@ -390,14 +390,14 @@ abbrev-alias drrm='docker run -it --rm'
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
 if which pbcopy >/dev/null 2>&1 ; then
-    # Mac
-    abbrev-alias -g C='| pbcopy'
+  # Mac
+  abbrev-alias -g C='| pbcopy'
 elif which xsel >/dev/null 2>&1 ; then
-    # Linux
-    abbrev-alias -g C='| xsel --input --clipboard'
+  # Linux
+  abbrev-alias -g C='| xsel --input --clipboard'
 elif which putclip >/dev/null 2>&1 ; then
-    # Cygwin
-    abbrev-alias -g C='| putclip'
+  # Cygwin
+  abbrev-alias -g C='| putclip'
 fi
 
 # zmv
@@ -408,90 +408,91 @@ alias zmv='noglob zmv -W'
 # tmuxの設定
 # ロギングで使うモジュールの確認
 if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
-       brew install ansifilter
+  brew install ansifilter
 fi
 
 ########################################
 # 自作関数の設定
 function tkill() {
-    tmux kill-session -t "$1"
+  tmux kill-session -t "$1"
 }
 
 function tkillall() { 
-    tmux kill-server
+  tmux kill-server
 }
 
 function see() {
-    local -A opthash
-    zparseopts -D -A opthash -- -log
-    local LOG_FLAG=""
-    if [[ -n "${opthash[(i)--log]}" ]]; then
-      # --logが指定された場合
-      LOG_FLAG="true"
-    fi
-    local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
-    local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
-    local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
-    local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
-    [[ -z $HOST_LINE ]] && return 1
+  local -A opthash
+  zparseopts -D -A opthash -- -log
+  local LOG_FLAG=""
+  if [[ -n "${opthash[(i)--log]}" ]]; then
+    # --logが指定された場合
+    LOG_FLAG="true"
+  fi
+  local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
+  local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
+  local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
+  local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
+  [[ -z $HOST_LINE ]] && return 1
 
-    local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
-    if [[ ! -z $LOG_FLAG  ]]; then
-      SSH_CMD="~/.zsh_logssh"
-    fi
-    #commentout imple
-    if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
-        echo "it's comment out"
-    else
-      eval ${SSH_CMD} ${HOST_NAME}
-      echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
-    fi
+  local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
+  if [[ ! -z $LOG_FLAG  ]]; then
+    SSH_CMD="~/.zsh_logssh"
+  fi
+
+  #commentout imple
+  if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
+      echo "it's comment out"
+  else
+    eval ${SSH_CMD} ${HOST_NAME}
+    echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
+  fi
 }
 
 function pane() {
-    ## get options ##
-    while getopts :s opt
-    do
-    case $opt in
-	    "s" ) readonly FLG_S="TRUE" ;;
-	    * ) usage; exit 1 ;;
-    esac
-    done
+  ## get options ##
+  while getopts :s opt
+  do
+  case $opt in
+    "s" ) readonly FLG_S="TRUE" ;;
+    * ) usage; exit 1 ;;
+  esac
+  done
 
-    shift `expr $OPTIND - 1`
+  shift `expr $OPTIND - 1`
 
-    ## tmux pane split ##
-    if [ $1 ]; then
-    cnt_pane=1
-    while [ $cnt_pane -lt $1 ]
-    do
-    if [ $(( $cnt_pane & 1 )) ]; then
- 	    tmux split-window -h
-    else
+  ## tmux pane split ##
+  if [ $1 ]; then
+      cnt_pane=1
+      while [ $cnt_pane -lt $1 ]
+      do
+      if [ $(( $cnt_pane & 1 )) ]; then
+        tmux split-window -h
+      else
  	    tmux split-window -v
-    fi
-    tmux select-layout tiled 1>/dev/null
-    cnt_pane=$(( $cnt_pane + 1 ))
-    done
-    fi
+      fi
+      tmux select-layout tiled 1>/dev/null
+      cnt_pane=$(( $cnt_pane + 1 ))
+      done
+  fi
 
-    #OPTION: start session with "synchronized-panes"
-    if [ "$FLG_S" = "TRUE" ]; then
-        tmux set-window-option synchronize-panes 1>/dev/null
-    fi
+  #OPTION: start session with "synchronized-panes"
+  if [ "$FLG_S" = "TRUE" ]; then
+    tmux set-window-option synchronize-panes 1>/dev/null
+  fi
 }
 
 function delete-zcomdump() {
-    rm -f ~/.zcomdump
-    rm -f ~/.zplug/zcomdump
+  rm -f ~/.zcomdump
+  rm -f ~/.zplug/zcomdump
 }
 
 function calc-zsh() {
-    time (zsh -i -c exit)
+  time (zsh -i -c exit)
 }
 
 function report-zsh() {
-    for i in $(seq 1 10); do time zsh -i -c exit; done 
+  for i in $(seq 1 10); do time zsh -i -c exit; done 
 }
 
 ########################################
@@ -499,7 +500,7 @@ function report-zsh() {
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
-    source ~/.zshrc_local
+  source ~/.zshrc_local
 fi
 
 # tmuxinaotrをロード
