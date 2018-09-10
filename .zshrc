@@ -3,19 +3,19 @@
 
 # tmuxでなんども読み込まない為に。
 if [ -z $TMUX ]; then
-    export LANG=ja_JP.UTF-8
-    export PATH=/usr/local/bin:$PATH
+  export LANG=ja_JP.UTF-8
+  export PATH=/usr/local/bin:$PATH
 
-    #エディタをvimに設定
-    export EDITORP=vim
+  #エディタをvimに設定
+  export EDITORP=vim
 
-    #tmuxinaotrの為に
-    export SHELL=zsh
+  #tmuxinaotrの為に
+  export SHELL=zsh
 
-    # zshrcをコンパイル確認
-    if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
-        zcompile ~/.zshrc
-    fi
+  # zshrcをコンパイル確認
+  if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
+    zcompile ~/.zshrc
+  fi
 fi
 
 #######################################
@@ -46,7 +46,7 @@ zplug "rupa/z", use:"*.sh"
 #if ! zplug check --verbose; then
 #  printf "Install? [y/N]: "
 #  if read -q; then
-#    echo; zplug install
+#  echo; zplug install
 #  fi
 #fi
 # Then, source plugins and add commands to $PATH
@@ -77,14 +77,14 @@ precmd() {
   autoload -Uz add-zsh-hook
 
   if [ "$(uname)" = 'Darwin' ]; then
-    zstyle ':vcs_info:git:*' check-for-changes true
-    zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-    zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
-    zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
+  zstyle ':vcs_info:git:*' check-for-changes true
+  zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+  zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
+  zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
+  zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
   else
-    zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
+  zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
+  zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
   fi
 
   if [ "$(uname)" = 'Darwin' ]; then
@@ -106,15 +106,15 @@ precmd() {
 }
 
 if [ "$(uname)" = 'Darwin' ]; then
-    PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
+  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
 else
-    PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
+  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
 fi
 
 if [ "$(uname)" = 'Darwin' ]; then
-    RPROMPT=$'%{\e[38;5;001m%}%(?..✘☝)%{\e[0m%} %{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
+  RPROMPT=$'%{\e[38;5;001m%}%(?..✘☝)%{\e[0m%} %{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 else
-    RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
+  RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 fi
 
 # プロンプト自動更新設定
@@ -123,30 +123,30 @@ autoload -U is-at-least
 zmodload zsh/datetime 
 
 reset_tmout() { 
-    TMOUT=$[1-EPOCHSECONDS%1]
+  TMOUT=$[1-EPOCHSECONDS%1]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
 reset_lastcomp() { 
-    _lastcomp=() 
+  _lastcomp=() 
 }
 
 if is-at-least 5.1; then
-    # avoid menuselect to be cleared by reset-prompt
-    redraw_tmout() {
-        [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
-        reset_tmout
-    }
+  # avoid menuselect to be cleared by reset-prompt
+  redraw_tmout() {
+    [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
+    reset_tmout
+  }
 else
-    # evaluating $WIDGET in TMOUT may crash :(
-    redraw_tmout() { 
-        zle reset-prompt; reset_tmout 
-    }
+  # evaluating $WIDGET in TMOUT may crash :(
+  redraw_tmout() { 
+    zle reset-prompt; reset_tmout 
+  }
 fi
 
 TRAPALRM() { 
-    redraw_tmout 
+  redraw_tmout 
 }
 
 # 単語の区切り文字を指定する
@@ -173,7 +173,7 @@ zstyle ':completion:*' ignore-parents parent pwd ..
 
 # sudo の後ろでコマンド名を補完する
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-                   /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+           /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
@@ -269,34 +269,34 @@ bindkey "^[[4~" end-of-line
 
 # ヒストリー検索をpecoで。
 peco-select-history() {
-    BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
-    CURSOR=${#BUFFER}
-    zle reset-prompt
+  BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+  CURSOR=${#BUFFER}
+  zle reset-prompt
 }
 zle -N peco-select-history
 bindkey '^R' peco-select-history
 
 # zをpecoで。
 peco-z-search() {
-    if which peco z >/dev/null 2>&1; then
-    else
-        echo "Please install peco and z"
-        return 1
-    fi
-    local res=$(z | sort -rn | cut -c 12- | peco)
-    if [ -n "$res" ]; then
-        BUFFER+="cd $res"
-        zle accept-line
-    else
-        return 1
-    fi
+  if which peco z >/dev/null 2>&1; then
+  else
+    echo "Please install peco and z"
+    return 1
+  fi
+  local res=$(z | sort -rn | cut -c 12- | peco)
+  if [ -n "$res" ]; then
+    BUFFER+="cd $res"
+    zle accept-line
+  else
+    return 1
+  fi
 }
 zle -N peco-z-search
 bindkey '^F' peco-z-search
 
 # cd up
 #function cd-up() { 
-#    zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+#  zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
 #}
 #zle -N cd-up
 #bindkey "^P" cd-up
@@ -426,8 +426,8 @@ function see() {
   zparseopts -D -A opthash -- -log
   local LOG_FLAG=""
   if [[ -n "${opthash[(i)--log]}" ]]; then
-    # --logが指定された場合
-    LOG_FLAG="true"
+  # --logが指定された場合
+  LOG_FLAG="true"
   fi
   local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
   local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
@@ -437,15 +437,15 @@ function see() {
 
   local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
   if [[ ! -z $LOG_FLAG  ]]; then
-    SSH_CMD="~/.zsh_logssh"
+  SSH_CMD="~/.zsh_logssh"
   fi
 
   #commentout imple
   if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
-      echo "it's comment out"
+  echo "it's comment out"
   else
-    eval ${SSH_CMD} ${HOST_NAME}
-    echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
+  eval ${SSH_CMD} ${HOST_NAME}
+  echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
   fi
 }
 
@@ -454,8 +454,8 @@ function pane() {
   while getopts :s opt
   do
   case $opt in
-    "s" ) readonly FLG_S="TRUE" ;;
-    * ) usage; exit 1 ;;
+  "s" ) readonly FLG_S="TRUE" ;;
+  * ) usage; exit 1 ;;
   esac
   done
 
@@ -463,22 +463,22 @@ function pane() {
 
   ## tmux pane split ##
   if [ $1 ]; then
-      cnt_pane=1
-      while [ $cnt_pane -lt $1 ]
-      do
-      if [ $(( $cnt_pane & 1 )) ]; then
-        tmux split-window -h
-      else
- 	    tmux split-window -v
-      fi
-      tmux select-layout tiled 1>/dev/null
-      cnt_pane=$(( $cnt_pane + 1 ))
-      done
+  cnt_pane=1
+  while [ $cnt_pane -lt $1 ]
+  do
+  if [ $(( $cnt_pane & 1 )) ]; then
+    tmux split-window -h
+  else
+ 	  tmux split-window -v
+  fi
+  tmux select-layout tiled 1>/dev/null
+  cnt_pane=$(( $cnt_pane + 1 ))
+  done
   fi
 
   #OPTION: start session with "synchronized-panes"
   if [ "$FLG_S" = "TRUE" ]; then
-    tmux set-window-option synchronize-panes 1>/dev/null
+  tmux set-window-option synchronize-panes 1>/dev/null
   fi
 }
 
@@ -505,5 +505,5 @@ fi
 
 # tmuxinaotrをロード
 #if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
-#    source ~/.tmuxinator/tmuxinator.zsh
+#  source ~/.tmuxinator/tmuxinator.zsh
 #fi
