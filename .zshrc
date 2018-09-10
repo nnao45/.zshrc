@@ -426,30 +426,13 @@ function tkillall() {
     tmux kill-server
 }
 
-function logger() {
-    local LOGDIR=$HOME/Documents/term_logs
-    local LOGFILE=$(hostname)_$(date +%Y-%m-%d_%H%M%S.log)
-    local FILECOUNT=0
-    local MAXFILECOUNT=500
-    # zsh起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
-    for file in `\find "$LOGDIR" -maxdepth 1 -type f -name "*.log" | sort --reverse`; do
-        FILECOUNT=`expr $FILECOUNT + 1`
-        if [ $FILECOUNT -ge $MAXFILECOUNT ]; then
-            rm -f $file
-        fi
-    done
-    [ ! -d $LOGDIR ] && mkdir -p $LOGDIR
-    tmux  set-option default-terminal "screen" \; \
-    pipe-pane        "cat - | ansifilter >> $LOGDIR/$LOGFILE" \; \
-    display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-}
-
 function see() {
     local -A opthash
     zparseopts -D -A opthash -- -log
+    local LOG_FLAG=""
     if [[ -n "${opthash[(i)--log]}" ]]; then
         # --logが指定された場合
-        logger
+        LOG_FLAG="true"
     fi
     local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
     local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
@@ -461,13 +444,13 @@ function see() {
     if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
         echo "it's comment out"
     else
-        if which adssh >/dev/null 2>&1; then
-            adssh ${HOST_IP}
-            echo adssh ${HIS_LINE} >> ~/.zsh_history
-        else
-            ssh ${HOST_IP}
-            echo ssh ${HIS_LINE} >> ~/.zsh_history
-        fi
+      #ssh ${HOST_IP}
+	  if [[ ! -z $LOG_FLAG  ]]; then
+        ~/.zsh_logssh ssh ${HOST_IP}
+      else
+        ssh ${HOST_IP}
+      fi
+        echo ssh ${HIS_LINE} >> ~/.zsh_history
     fi
 }
 
