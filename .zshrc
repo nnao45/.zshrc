@@ -440,7 +440,7 @@ function see() {
     local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
     [[ -z $HOST_LINE ]] && return 1
 
-    local SSH_CMD="ssh"
+    local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
     if [[ ! -z $LOG_FLAG  ]]; then
       SSH_CMD="~/.zsh_logssh"
     fi
