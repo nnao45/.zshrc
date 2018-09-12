@@ -37,7 +37,7 @@ zplug 'b4b4r07/gomi', as:command, from:gh-r
 zplug "momo-lab/zsh-abbrev-alias"
 
 # dockerコマンドの補完
-#zplug "felixr/docker-zsh-completion"
+zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh"
@@ -430,14 +430,14 @@ function see() {
     LOG_FLAG="true"
   fi
   local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
-  local HOST_IP=`echo $HOST_LINE | awk '{print $1}'`
-  local HOST_NAME=`echo $HOST_LINE | awk '{print $2}'`
-  local HIS_LINE=`echo ${HOST_IP} \#${HOST_NAME}`
-  [[ -z $HOST_LINE ]] && return 1
+  local HOST_IP=`echo ${HOST_LINE} | awk '{print $1}'`
+  local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
+  local HIS_LINE=`echo ${HOST_NAME} \#${HOST_IP}`
+  [[ -z ${HOST_LINE} ]] && return 1
 
-  local SSH_CMD="env LANG=C ssh -o StrictHostKeyChecking=no"
-  if [[ ! -z $LOG_FLAG  ]]; then
-    SSH_CMD="~/.zsh_logssh"
+  local SSH_CMD="ssh"
+  if [[ ! -z ${LOG_FLAG}  ]]; then
+    SSH_CMD="~/.zsh_logssh ssh"
   fi
 
   #commentout imple
