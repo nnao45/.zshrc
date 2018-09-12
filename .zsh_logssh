@@ -7,7 +7,7 @@ else
   tar -jxvf /tmp/ansifilter-2.1.tar.bz2 -C /tmp/
   cd /tmp/ansifilter-2.1
   make
-  mv src/ansifilter /bin/ansifilter
+  mv src/ansifilter /usr/local/bin/ansifilter
   cd ${PWD}
 fi
 
