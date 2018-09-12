@@ -36,7 +36,7 @@ fi
 
 if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
   local LOGDIR=$HOME/Documents/term_logs
-  local LOGFILE=$(date +${@}_%Y-%m-%d_%H-%M-%S.log)
+  local LOGFILE=$(date +${2}_%Y-%m-%d_%H-%M-%S.log)
   local FILECOUNT=0
   local MAXFILECOUNT=200
   # 本スクリプト起動時に自動で$MAXFILECOUNTのファイル数以上ログファイルあれば消す
@@ -50,6 +50,6 @@ if [[ $TERM = screen ]] || [[ $TERM = screen-256color ]] ; then
   tmux  set-option default-terminal "screen" \; \
   pipe-pane        "cat - | ${ANSIFILTER} | ~/.zsh_timestamp >> $LOGDIR/$LOGFILE" \; \
   display-message  "💾Started logging to $LOGDIR/$LOGFILE"
-  env LANG=C ssh -o StrictHostKeyChecking=no $@
+  ${@}
   tmux pipe-pane\; display-message  "🔔End logging to $LOGDIR/$LOGFILE"
 fi
