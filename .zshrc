@@ -319,7 +319,6 @@ bindkey "^Q" kill-whole-line
 
 abbrev-alias ls='ls -G'
 
-abbrev-alias l='ls -CF'
 abbrev-alias la='ls -la'
 abbrev-alias ll='ls -l'
 
@@ -425,10 +424,10 @@ function tkillall() {
 }
 
 function see() {
-  local -A opthash
-  zparseopts -D -A opthash -- -log
+  local -A SEE_OPTHASH
+  zparseopts -D -A SEE_OPTHASH -- -log
   local LOG_FLAG=""
-  if [[ -n "${opthash[(i)--log]}" ]]; then
+  if [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
     # --logが指定された場合
     LOG_FLAG="true"
   fi
@@ -453,34 +452,31 @@ function see() {
 }
 
 function pane() {
-  ## get options ##
-  while getopts :s opt
-  do
-  case $opt in
-    "s" ) readonly FLG_S="TRUE" ;;
-    * ) usage; exit 1 ;;
-  esac
-  done
-
-  shift `expr $OPTIND - 1`
+  local -A PANE_OPTHASH
+  zparseopts -D -A PANE_OPTHASH -- -sync s
+  local PANE_FLAG=""
+  if [[ -n "${PANE_OPTHASH[(i)-s]}" ]] || [[ -n "${PANE_OPTHASH[(i)--sync]}" ]]; then
+    # --syncが指定された場合
+    PANE_FLAG="true"
+  fi
 
   ## tmux pane split ##
   if [ $1 ]; then
-    cnt_pane=1
-    while [ $cnt_pane -lt $1 ]
+    local COUNT=1
+    while [ $COUNT -lt $1 ]
     do
-    if [ $(( $cnt_pane & 1 )) ]; then
+    if [ $(( $COUNT & 1 )) ]; then
       tmux split-window -h
     else
  	    tmux split-window -v
     fi
     tmux select-layout tiled 1>/dev/null
-    cnt_pane=$(( $cnt_pane + 1 ))
+    COUNT=$(( $COUNT + 1 ))
     done
   fi
 
   #OPTION: start session with "synchronized-panes"
-  if [ "$FLG_S" = "TRUE" ]; then
+  if [ ! -z "$PANE_FLAG" ]; then
     tmux set-window-option synchronize-panes 1>/dev/null
   fi
 }
@@ -500,13 +496,7 @@ function report-zsh() {
 
 ########################################
 # その他
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 # ローカルの設定を見る
 if [ -e　~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
-
-# tmuxinaotrをロード
-#if [ -e　~/.tmuxinator/tmuxinator.zsh ]; then
-#  source ~/.tmuxinator/tmuxinator.zsh
-#fi
