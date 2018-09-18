@@ -457,11 +457,12 @@ function xssh() {
     echo 'xpanes is not found, Please install'
     return 1
   fi
-  local HOST_NAME=`cat /etc/hosts | peco | awk '{print $2}'`
+  local HOST_LINE=`cat /etc/hosts | peco | awk '{print $1, $2}'`
+  local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
   local SSH_CMD=`echo ${HOST_NAME} | xpanes ssh`
 
   #commentout imple
-  if echo "${HOST_NAME}" | grep '^#' >/dev/null 2>&1; then
+  if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
     echo "it's comment out"
   else
     eval ${SSH_CMD}
