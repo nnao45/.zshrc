@@ -1,3 +1,0 @@
-#!/usr/local/bin/zsh
-
-~/.zsh_ts '[%Y-%m-%d %H:%M:%.S]'
