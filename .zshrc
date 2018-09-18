@@ -42,6 +42,9 @@ zplug "felixr/docker-zsh-completion"
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh"
 
+# zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
+zplug "nnao45/ztl", use:'src/_*' 
+
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
 #  printf "Install? [y/N]: "
@@ -435,9 +438,9 @@ function see() {
   local HIS_LINE=`echo ${HOST_NAME} \#${HOST_IP}`
   [[ -z ${HOST_LINE} ]] && return 1
 
-  local SSH_CMD="ssh"
+  local SSH_CMD="ssh -o ConnectTimeout=5"
   if [[ ! -z ${LOG_FLAG}  ]]; then
-    SSH_CMD="~/.zsh_logssh ssh"
+    SSH_CMD="ztl ssh"
   fi
 
   #commentout imple
