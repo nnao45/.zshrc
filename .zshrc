@@ -425,9 +425,9 @@ function tkillall() {
 
 function see() {
   local -A SEE_OPTHASH
-  zparseopts -D -A SEE_OPTHASH -- -log
+  zparseopts -D -A SEE_OPTHASH -- -log l
   local LOG_FLAG=""
-  if [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
+  if [[ -n "${PANE_OPTHASH[(i)-l]}" ]] ||  [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
     # --logが指定された場合
     LOG_FLAG="true"
   fi
@@ -448,6 +448,24 @@ function see() {
   else
     eval ${SSH_CMD} ${HOST_NAME}
     echo ${SSH_CMD} ${HIS_LINE} >> ~/.zsh_history
+  fi
+}
+
+function xssh() {
+  if which xpanes >/dev/null 2>&1; then
+  else
+    echo 'xpanes is not found, Please install'
+    return 1
+  fi
+  local HOST_NAME=`cat /etc/hosts | peco | awk '{print $2}'`
+  local SSH_CMD=`echo ${HOST_NAME} | xpanes ssh`
+
+  #commentout imple
+  if echo "${HOST_NAME}" | grep '^#' >/dev/null 2>&1; then
+    echo "it's comment out"
+  else
+    eval ${SSH_CMD}
+    echo ssh ${HOST_NAME} >> ~/.zsh_history
   fi
 }
 
