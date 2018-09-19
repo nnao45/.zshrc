@@ -408,13 +408,6 @@ autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
 ########################################
-# tmuxの設定
-# ロギングで使うモジュールの確認
-if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
-  brew install ansifilter
-fi
-
-########################################
 # 自作関数の設定
 function tkill() {
   tmux kill-session -t "$1"
