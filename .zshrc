@@ -298,11 +298,11 @@ zle -N peco-z-search
 bindkey '^F' peco-z-search
 
 # cd up
-#function cd-up() { 
-#  zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
-#}
-#zle -N cd-up
-#bindkey "^P" cd-up
+function cd-up() { 
+  zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+}
+zle -N cd-up
+bindkey "^Q" cd-up
 
 # clear command
 bindkey "^S" clear-screen
@@ -310,9 +310,6 @@ bindkey "^S" clear-screen
 # word forward
 bindkey "^N" forward-word
 bindkey "^B" backward-word
-
-# kill line
-bindkey "^Q" kill-whole-line
 
 ########################################
 # エイリアス
