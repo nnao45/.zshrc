@@ -16,6 +16,10 @@ if [ -z $TMUX ]; then
   if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
     zcompile ~/.zshrc
   fi
+
+  # fzfのオプション
+  export FZF_TMUX_HEIGHT=5
+  export FZF_DEFAULT_OPTS='--height 30% --reverse'
 fi
 
 #######################################
