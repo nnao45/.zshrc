@@ -418,7 +418,7 @@ abbrev-alias pd='popd'
 abbrev-alias f='fzf'
 
 if [ -n $TMUX ]; then
-  abbrev-alias fzf='fzf-tmux -d 40%'
+  abbrev-alias fzf='fzf-tmux -d 45%'
 fi
 
 ########################################
