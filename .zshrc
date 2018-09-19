@@ -18,7 +18,8 @@ if [ -z $TMUX ]; then
   fi
 
   # fzfのオプション
-  export FZF_TMUX_HEIGHT=5
+  export FZF_TMUX=1
+  export FZF_TMUX_HEIGHT='30%'
   export FZF_DEFAULT_OPTS='--height 30% --reverse'
 fi
 
@@ -436,7 +437,7 @@ function see() {
   local -A SEE_OPTHASH
   zparseopts -D -A SEE_OPTHASH -- -log l
   local LOG_FLAG=""
-  if [[ -n "${PANE_OPTHASH[(i)-l]}" ]] ||  [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
+  if [[ -n "${SEE_OPTHASH[(i)-l]}" ]] ||  [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
     # --logが指定された場合
     LOG_FLAG="true"
   fi
