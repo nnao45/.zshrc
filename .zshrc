@@ -34,16 +34,16 @@ zplug "chrissicool/zsh-256color"
 zplug 'b4b4r07/gomi', as:command, from:gh-r
 
 # 略語を展開する
-zplug "momo-lab/zsh-abbrev-alias"
+zplug "momo-lab/zsh-abbrev-alias" 
 
 # dockerコマンドの補完
-zplug "felixr/docker-zsh-completion"
+#zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
-zplug "rupa/z", use:"*.sh"
+zplug "rupa/z", use:"*.sh" lazy:true
 
 # zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
-zplug "nnao45/ztl", use:'src/_*' 
+zplug "nnao45/ztl", use:'src/_*' lazy:true
 
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
