@@ -317,6 +317,7 @@ bindkey "^Q" kill-whole-line
 ########################################
 # エイリアス
 
+abbrev-alias l='ls'
 abbrev-alias ls='ls -G'
 
 abbrev-alias la='ls -la'
@@ -407,6 +408,13 @@ autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
 ########################################
+# tmuxの設定
+# ロギングで使うモジュールの確認
+if [[ -x ansifilter ]] && [[ "$(uname)" = 'Darwin' ]]; then
+  brew install ansifilter
+fi
+
+########################################
 # 自作関数の設定
 function tkill() {
   tmux kill-session -t "$1"
@@ -445,6 +453,11 @@ function see() {
 }
 
 function xssh() {
+  if [ -z $TMUX ]; then
+    echo "Sorry, xssh is only support on the tmux"
+    return 1
+  fi
+
   if which xpanes >/dev/null 2>&1; then
   else
     echo 'xpanes is not found, Please install'
