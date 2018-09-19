@@ -299,7 +299,8 @@ bindkey '^F' peco-z-search
 
 # cd up
 function cd-up() { 
-  zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+  #zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
+  zle push-line && LBUFFER='..' && zle accept-line  
 }
 zle -N cd-up
 bindkey "^Q" cd-up
