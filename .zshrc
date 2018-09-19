@@ -18,8 +18,6 @@ if [ -z $TMUX ]; then
   fi
 
   # fzfのオプション
-  export FZF_TMUX=1
-  export FZF_TMUX_HEIGHT='30%'
   export FZF_DEFAULT_OPTS='--height 30% --reverse'
 fi
 
@@ -420,7 +418,7 @@ abbrev-alias pd='popd'
 abbrev-alias f='fzf'
 
 if [ -n $TMUX ]; then
-  abbrev-alias fzf='fzf-tmux'
+  abbrev-alias fzf='fzf-tmux -d 40%'
 fi
 
 ########################################
