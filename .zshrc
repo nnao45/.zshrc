@@ -288,7 +288,7 @@ peco-z-search() {
   fi
   local res=$(z | sort -rn | cut -c 12- | peco)
   if [ -n "$res" ]; then
-    BUFFER+="cd $res"
+    BUFFER+="$res"
     zle accept-line
   else
     return 1
