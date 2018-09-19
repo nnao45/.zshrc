@@ -334,6 +334,9 @@ abbrev-alias mv='mv -i'
 abbrev-alias mkdir='mkdir -p'
 
 abbrev-alias t='tmux'
+if [ -z $TMUX ]; then
+  alias tmux="tmux -2 attach || tmux -2 new-session \; source-file ~/.tmux/new-session"
+fi
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
   alias vi='env LANG=ja_JP.UTF-8 /Applications/MacVim.app/Contents/MacOS/Vim "$@"'
