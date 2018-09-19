@@ -407,6 +407,9 @@ fi
 autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
+# popd
+abbrev-alias pd='popd'
+
 ########################################
 # 自作関数の設定
 function tkill() {
