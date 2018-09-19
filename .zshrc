@@ -45,13 +45,16 @@ zplug "rupa/z", use:"*.sh" lazy:true
 # zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
 zplug "nnao45/ztl", use:'src/_*' lazy:true
 
+# コマンドラインで絵文字
+zplug "b4b4r07/emoji-cli"
+
 # Install plugins if there are plugins that have not been installed
-#if ! zplug check --verbose; then
-#  printf "Install? [y/N]: "
-#  if read -q; then
-#  echo; zplug install
-#  fi
-#fi
+if ! zplug check --verbose; then
+  printf "Install? [y/N]: "
+  if read -q; then
+  echo; zplug install
+  fi
+fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
@@ -270,23 +273,23 @@ bindkey "^[[1~" beginning-of-line
 # Endキー
 bindkey "^[[4~" end-of-line
 
-# ヒストリー検索をpecoで。
-peco-select-history() {
-  BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | peco --query "$LBUFFER")
+# ヒストリー検索をfzfで。
+fzf-select-history() {
+  BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | fzf --query "$LBUFFER")
   CURSOR=${#BUFFER}
   zle reset-prompt
 }
-zle -N peco-select-history
-bindkey '^R' peco-select-history
+zle -N fzf-select-history
+bindkey '^R' fzf-select-history
 
-# zをpecoで。
-peco-z-search() {
-  if which peco z >/dev/null 2>&1; then
+# zをfzfで。
+fzf-z-search() {
+  if which fzf z >/dev/null 2>&1; then
   else
-    echo "Please install peco and z"
+    echo "Please install fzf and z"
     return 1
   fi
-  local res=$(z | sort -rn | cut -c 12- | peco)
+  local res=$(z | sort -rn | cut -c 12- | fzf)
   if [ -n "$res" ]; then
     BUFFER+="$res"
     zle accept-line
@@ -294,8 +297,8 @@ peco-z-search() {
     return 1
   fi
 }
-zle -N peco-z-search
-bindkey '^F' peco-z-search
+zle -N fzf-z-search
+bindkey '^F' fzf-z-search
 
 # cd up
 function cd-up() { 
@@ -306,7 +309,7 @@ zle -N cd-up
 bindkey "^Q" cd-up
 
 # clear command
-bindkey "^S" clear-screen
+#bindkey "^S" clear-screen
 
 # word forward
 bindkey "^N" forward-word
@@ -408,6 +411,13 @@ alias zmv='noglob zmv -W'
 # popd
 abbrev-alias pd='popd'
 
+# fzf
+abbrev-alias f='fzf'
+
+if [ -n $TMUX ]; then
+  abbrev-alias fzf='fzf-tmux'
+fi
+
 ########################################
 # 自作関数の設定
 function tkill() {
@@ -426,7 +436,7 @@ function see() {
     # --logが指定された場合
     LOG_FLAG="true"
   fi
-  local HOST_LINE=`tail -n +5 /etc/hosts | peco | awk '{print $1, $2}'`
+  local HOST_LINE=`tail -n +5 /etc/hosts | fzf | awk '{print $1, $2}'`
   local HOST_IP=`echo ${HOST_LINE} | awk '{print $1}'`
   local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
   local HIS_LINE=`echo ${HOST_NAME} \#${HOST_IP}`
@@ -457,7 +467,7 @@ function xssh() {
     echo 'xpanes is not found, Please install'
     return 1
   fi
-  local HOST_LINE=`cat /etc/hosts | peco | awk '{print $1, $2}'`
+  local HOST_LINE=`cat /etc/hosts | fzf -m | awk '{print $1, $2}'`
   local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
   local SSH_CMD=`echo ${HOST_NAME} | xpanes ssh`
 
