@@ -18,7 +18,10 @@ if [ -z $TMUX ]; then
   fi
 
   # fzfのオプション
-  export FZF_DEFAULT_OPTS='--height 30% --reverse'
+  export FZF_DEFAULT_OPTS='
+    --height 30% --reverse 
+    --color=bg+:161,pointer:7,spinner:227,info:7,prompt:161,hl:199,hl+:227
+  '
 fi
 
 #######################################
@@ -419,6 +422,7 @@ abbrev-alias pd='popd'
 
 # fzf
 abbrev-alias f='fzf'
+abbrev-alias fp="fzf --preview 'cat {}'"
 
 if [ -n $TMUX ]; then
   abbrev-alias fzf='fzf-tmux -d 45%'
