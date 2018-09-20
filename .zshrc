@@ -365,15 +365,18 @@ abbrev-alias tailf='tail -f'
 abbrev-alias diff='colordiff -u'
 abbrev-alias m='make'
 abbrev-alias tf='terraform'
+abbrev-alias less='less -R'
+abbrev-alias tree="tree -NC"
+
 
 # sudo の後のコマンドでエイリアスを有効にする
 abbrev-alias sudo='sudo '
 
 # グローバルエイリアス
-alias less='less -R'
 abbrev-alias -g L='| less'
 abbrev-alias -g G='| grep'
 abbrev-alias -g B='| bc'
+abbrev-alias -g E='| emojify'
 abbrev-alias tree="tree -NC"
 
 # パイプをandで書く。
