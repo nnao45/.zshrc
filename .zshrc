@@ -481,6 +481,9 @@ function xssh() {
     return 1
   fi
   local HOST_LINE=`cat /etc/hosts | fzf -m | awk '{print $1, $2}'`
+  if [ -z ${HOST_LINE} ]; then
+    return 1
+  fi
   local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
   local SSH_CMD=`echo ${HOST_NAME} | xpanes ssh`
 
