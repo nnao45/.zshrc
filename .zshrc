@@ -20,7 +20,7 @@ if [ -z $TMUX ]; then
   # fzfのオプション
   export FZF_DEFAULT_OPTS='
     --height 30% --reverse 
-    --color=bg+:161,pointer:7,spinner:227,info:7,prompt:161,hl:199,hl+:227
+    --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227
   '
 fi
 
