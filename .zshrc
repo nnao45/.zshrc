@@ -295,7 +295,7 @@ fzf-z-search() {
     echo "Please install fzf and z"
     return 1
   fi
-  local res=$(z | sort -rn | cut -c 12- | fzf)
+  local res=$(z | sort -rn | cut -c 12- | fzf --no-sort)
   if [ -n "$res" ]; then
     BUFFER+="$res"
     zle accept-line
@@ -307,7 +307,7 @@ zle -N fzf-z-search
 bindkey '^F' fzf-z-search
 
 # cd up
-function cd-up() { 
+cd-up() { 
   #zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
   zle push-line && LBUFFER='..' && zle accept-line  
 }
@@ -433,15 +433,15 @@ fi
 
 ########################################
 # 自作関数の設定
-function tkill() {
+tkill() {
   tmux kill-session -t "$1"
 }
 
-function tkillall() { 
+tkillall() { 
   tmux kill-server
 }
 
-function see() {
+see() {
   local -A SEE_OPTHASH
   zparseopts -D -A SEE_OPTHASH -- -log l
   local LOG_FLAG=""
@@ -469,7 +469,7 @@ function see() {
   fi
 }
 
-function xssh() {
+xssh() {
   if [ -z $TMUX ]; then
     echo "Sorry, xssh is only support on the tmux"
     return 1
@@ -496,7 +496,7 @@ function xssh() {
   fi
 }
 
-function pane() {
+pane() {
   local -A PANE_OPTHASH
   zparseopts -D -A PANE_OPTHASH -- -sync s
   local PANE_FLAG=""
@@ -526,16 +526,16 @@ function pane() {
   fi
 }
 
-function delete-zcomdump() {
+delete-zcomdump() {
   rm -f ~/.zcomdump
   rm -f ~/.zplug/zcomdump
 }
 
-function calc-zsh() {
+calc-zsh() {
   time (zsh -i -c exit)
 }
 
-function report-zsh() {
+report-zsh() {
   for i in $(seq 1 10); do time zsh -i -c exit; done 
 }
 
