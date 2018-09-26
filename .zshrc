@@ -55,12 +55,12 @@ zplug "nnao45/ztl", use:'src/_*' lazy:true
 zplug "b4b4r07/emoji-cli"
 
 # Install plugins if there are plugins that have not been installed
-if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
-  if read -q; then
-  echo; zplug install
-  fi
-fi
+#if ! zplug check --verbose; then
+#  printf "Install? [y/N]: "
+#  if read -q; then
+#  echo; zplug install
+#  fi
+#fi
 # Then, source plugins and add commands to $PATH
 zplug load
 
@@ -92,8 +92,8 @@ precmd() {
     zstyle ':vcs_info:git:*' check-for-changes true
     zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
     zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
-    zstyle ':vcs_info:*' formats '%F{green}%c%u[✔ %b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}%c%u[✑ %b|%a]%f'
+    zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
+    zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
   else
     zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
     zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
