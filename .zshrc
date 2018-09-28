@@ -431,7 +431,7 @@ abbrev-alias f='fzf'
 abbrev-alias fp="fzf --preview 'cat {}'"
 
 if [ -n $TMUX ]; then
-  abbrev-alias fzf='fzf-tmux -d 45%'
+  abbrev-alias fzf='fzf-tmux -d 30%'
 fi
 
 ########################################
