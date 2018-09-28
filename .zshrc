@@ -216,6 +216,9 @@ setopt interactive_comments
 # ディレクトリ名だけでcdする
 setopt auto_cd
 
+# 一個前とホームディレクトリと/repoの配下のディレクトリにはその名前だけで移動できるようにする。
+cdpath=(.. ~ /repo ~/go-third-party/src/github.com)
+
 # cd したら自動的にpushdする
 setopt auto_pushd
 
