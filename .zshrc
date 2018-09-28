@@ -293,8 +293,7 @@ bindkey '^R' fzf-select-history
 
 # zをfzfで。
 fzf-z-search() {
-  if which fzf z >/dev/null 2>&1; then
-  else
+  if ! which fzf z >/dev/null 2>&1; then
     echo "Please install fzf and z"
     return 1
   fi
@@ -478,8 +477,7 @@ xssh() {
     return 1
   fi
 
-  if which xpanes >/dev/null 2>&1; then
-  else
+  if ! which xpanes >/dev/null 2>&1; then
     echo 'xpanes is not found, Please install'
     return 1
   fi
