@@ -21,6 +21,7 @@ if [ -z $TMUX ]; then
   export FZF_DEFAULT_OPTS='
     --height 30% --reverse 
     --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227,marker:227
+    --no-mouse
   '
 fi
 
@@ -43,7 +44,7 @@ zplug 'b4b4r07/gomi', as:command, from:gh-r
 zplug "momo-lab/zsh-abbrev-alias" 
 
 # dockerコマンドの補完
-#zplug "felixr/docker-zsh-completion"
+zplug "felixr/docker-zsh-completion"
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh" lazy:true
@@ -171,6 +172,8 @@ export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
+zstyle ':completion:*' format '%B%d%b'
+zstyle ':completion:*' group-name 
 
 ########################################
 # 補完
@@ -217,7 +220,7 @@ setopt interactive_comments
 setopt auto_cd
 
 # 一個前とホームディレクトリと/repoの配下のディレクトリにはその名前だけで移動できるようにする。
-cdpath=(.. ~ /repo ~/go-third-party/src/github.com)
+#cdpath=(.. ~ /repo ~/go-third-party/src/github.com)
 
 # cd したら自動的にpushdする
 setopt auto_pushd
@@ -538,6 +541,38 @@ calc-zsh() {
 
 report-zsh() {
   for i in $(seq 1 10); do time zsh -i -c exit; done 
+}
+
+zload() {
+    if [[ "${#}" -le 0 ]]; then
+        echo "Usage: $0 PATH..."
+        echo 'Load specified files as an autoloading function'
+        return 1
+    fi
+
+    local file function_path function_name
+    for file in "$@"; do
+        if [[ -z "$file" ]]; then
+            continue
+        fi
+
+        function_path="${file:h}"
+        function_name="${file:t}"
+
+        if (( $+functions[$function_name] )) ; then
+            # "function_name" is defined
+            unfunction "$function_name"
+        fi
+        FPATH="$function_path" autoload -Uz +X "$function_name"
+
+        if [[ "$function_name" == _* ]]; then
+            # "function_name" is a completion script
+
+            # fpath requires absolute path
+            # convert relative path to absolute path with :a modifier
+            fpath=("${function_path:a}" $fpath) compinit
+        fi
+    done
 }
 
 ########################################
