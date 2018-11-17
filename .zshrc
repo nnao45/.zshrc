@@ -428,6 +428,14 @@ alias zmv='noglob zmv -W'
 # popd
 abbrev-alias pd='popd'
 
+# kubectl
+alias k='kubectl'
+abbrev-alias ka='kubectl apply'
+abbrev-alias kd='kubectl delete'
+abbrev-alias kg='kubectl get'
+abbrev-alias kga='kubectl get all --all-namespaces -o wide'
+abbrev-alias ke='kubectl exec'
+
 # fzf
 abbrev-alias f='fzf'
 abbrev-alias fp="fzf --preview 'cat {}'"
