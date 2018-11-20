@@ -58,7 +58,7 @@ zplug "rupa/z", use:"*.sh" lazy:true
 zplug "nnao45/ztl", use:'src/_*' lazy:true
 
 # コマンドラインで絵文字
-zplug "b4b4r07/emoji-cli"
+zplug "b4b4r07/emoji-cli", lazy:true
 
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
