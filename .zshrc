@@ -41,10 +41,15 @@ zplug "chrissicool/zsh-256color"
 zplug 'b4b4r07/gomi', as:command, from:gh-r
 
 # 略語を展開する
-zplug "momo-lab/zsh-abbrev-alias" 
+zplug "momo-lab/zsh-abbrev-alias"
 
 # dockerコマンドの補完
-zplug "felixr/docker-zsh-completion"
+zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
+
+
+# kubectlコマンドの補完
+zplug "nnao45/zsh-kubectl-completion", lazy:true
+zstyle ':completion:*:*:kubectl:*' list-grouped false 
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh" lazy:true
