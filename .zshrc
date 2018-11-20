@@ -46,7 +46,6 @@ zplug "momo-lab/zsh-abbrev-alias"
 # dockerコマンドの補完
 zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
 
-
 # kubectlコマンドの補完
 zplug "nnao45/zsh-kubectl-completion", lazy:true
 zstyle ':completion:*:*:kubectl:*' list-grouped false 
