@@ -585,4 +585,3 @@ zshrc-update(){
 if [ -e　~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
-cat: C: そのようなファイルやディレクトリはありません
