@@ -28,7 +28,7 @@ fi
 #######################################
 # 外部プラグイン
 # zplug
-if which zplug >/dev/null 2>&1; then
+if [ ! -d ~/.zplug ]; then
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
@@ -57,7 +57,7 @@ zstyle ':completion:*:*:kubectl:*' list-grouped false
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh" lazy:true
 if [ ! -f ${HOME}/.z ]; then
-  touch ${HOME}/.z
+  mkdir ${HOME}/.z
 fi
 
 # zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
@@ -75,6 +75,11 @@ zplug "b4b4r07/emoji-cli", lazy:true
 #fi
 # Then, source plugins and add commands to $PATH
 zplug load
+
+if ! which fzf >/dev/null 2>&1; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
 
 #######################################
 # プロンプトなどの設定
@@ -346,7 +351,7 @@ if [[ "$(uname)" = 'Darwin' ]] ; then
 else
   alias vi='/usr/bin/vim'
   alias vim='/usr/bin/vim'
-  if which dircolors > /dev/null 2>&1 && which dir_colors > /dev/null 2>&1; then
+  if which dircolors > /dev/null 2>&1; then
     test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)"
     abbrev-alias ls='ls --color=auto'
     abbrev-alias dir='dir --color=auto'
@@ -588,3 +593,6 @@ zshrc-update(){
 if [ -e　~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
+
+# fzfのパス
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
