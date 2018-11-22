@@ -28,7 +28,7 @@ fi
 #######################################
 # 外部プラグイン
 # zplug
-if ! which zplug >/dev/null 2>&1; then
+if which zplug >/dev/null 2>&1; then
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
