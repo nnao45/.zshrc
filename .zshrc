@@ -19,7 +19,7 @@ if [ -z $TMUX ]; then
 
   # fzfのオプション
   export FZF_DEFAULT_OPTS='
-    --height 30% --reverse 
+    --height 30% --reverse
     --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227,marker:227
     --no-mouse
   '
@@ -28,10 +28,14 @@ fi
 #######################################
 # 外部プラグイン
 # zplug
+if ! which zplug >/dev/null 2>&1; then
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi
+
 source ~/.zplug/init.zsh
 
 # 構文のハイライト(https://github.com/zdharma/fast-syntax-highlighting)
-zplug "zdharma/fast-syntax-highlighting", defer:2 
+zplug "zdharma/fast-syntax-highlighting", defer:2
 # タイプ補完
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
@@ -48,7 +52,7 @@ zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
 
 # kubectlコマンドの補完
 zplug "nnao45/zsh-kubectl-completion", lazy:true
-zstyle ':completion:*:*:kubectl:*' list-grouped false 
+zstyle ':completion:*:*:kubectl:*' list-grouped false
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh" lazy:true
@@ -93,22 +97,13 @@ precmd() {
   autoload -Uz vcs_info
   autoload -Uz add-zsh-hook
 
-  if [ "$(uname)" = 'Darwin' ]; then
-    zstyle ':vcs_info:git:*' check-for-changes true
-    zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-    zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
-    zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
-  else
-    zstyle ':vcs_info:*' formats '%F{green}[%b]%f'
-    zstyle ':vcs_info:*' actionformats '%F{red}[%b|%a]%f'
-  fi
+  zstyle ':vcs_info:git:*' check-for-changes true
+  zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+  zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
+  zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
+  zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
 
-  if [ "$(uname)" = 'Darwin' ]; then
-  	local left=$'%{\e[38;5;083m%}%n%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
-  else
-  	local left=$'%{\e[38;5;083m%}%n%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}=>%{\e[0m%} %{\e[38;5;051m%}%~%{\e[0m%}'
-  fi
+  local left=$'%{\e[38;5;083m%}%n%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
   local right="${vcs_info_msg_0_} "
 
   LANG=en_US.UTF-8 vcs_info
@@ -118,35 +113,26 @@ precmd() {
   local invisible='%([BSUbfksu]|([FK]|){*})'
   local leftwidth=${#${(S%%)left//$~invisible/}}
   local rightwidth=${#${(S%%)right//$~invisible/}}
-  local padwidth=$(($COLUMNS - ($leftwidth + $rightwidth) % $COLUMNS)) 
+  local padwidth=$(($COLUMNS - ($leftwidth + $rightwidth) % $COLUMNS))
   print -P $left${(r:$padwidth:: :)}$right
 }
 
-if [ "$(uname)" = 'Darwin' ]; then
-  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
-else
-  PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}>%{\e[0m%} '
-fi
-
-if [ "$(uname)" = 'Darwin' ]; then
-  RPROMPT=$'%{\e[38;5;001m%}%(?..✘☝)%{\e[0m%} %{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
-else
-  RPROMPT=$'%{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
-fi
+PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
+RPROMPT=$'%{\e[38;5;001m%}%(?..✘☝)%{\e[0m%} %{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 
 # プロンプト自動更新設定
 autoload -U is-at-least
 # $EPOCHSECONDS, strftime等を利用可能に
-zmodload zsh/datetime 
+zmodload zsh/datetime
 
-reset_tmout() { 
+reset_tmout() {
   TMOUT=$[1-EPOCHSECONDS%1]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
-reset_lastcomp() { 
-  _lastcomp=() 
+reset_lastcomp() {
+  _lastcomp=()
 }
 
 if is-at-least 5.1; then
@@ -157,13 +143,13 @@ if is-at-least 5.1; then
   }
 else
   # evaluating $WIDGET in TMOUT may crash :(
-  redraw_tmout() { 
-    zle reset-prompt; reset_tmout 
+  redraw_tmout() {
+    zle reset-prompt; reset_tmout
   }
 fi
 
-TRAPALRM() { 
-  redraw_tmout 
+TRAPALRM() {
+  redraw_tmout
 }
 
 # 単語の区切り文字を指定する
@@ -177,7 +163,7 @@ zstyle ':completion:*' verbose yes
 zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
 zstyle ':completion:*' format '%B%d%b'
-zstyle ':completion:*' group-name 
+zstyle ':completion:*' group-name
 
 ########################################
 # 補完
@@ -257,7 +243,7 @@ setopt extended_glob
 #setopt correct
 
 # 補完候補を詰めて表示する
-setopt list_packed 
+setopt list_packed
 
 # カーソル位置は保持したままファイル名一覧を順次その場で表示
 setopt always_last_prompt
@@ -272,7 +258,7 @@ setopt complete_in_word
 setopt no_flow_control
 
 # バックグラウンドジョブが終了したらすぐに知らせる
-setopt notify 
+setopt notify
 
 # remove file mark
 unsetopt list_types
@@ -316,9 +302,9 @@ zle -N fzf-z-search
 bindkey '^F' fzf-z-search
 
 # cd up
-cd-up() { 
-  #zle push-line && LBUFFER='builtin cd ..' && zle accept-line 
-  zle push-line && LBUFFER='..' && zle accept-line  
+cd-up() {
+  #zle push-line && LBUFFER='builtin cd ..' && zle accept-line
+  zle push-line && LBUFFER='..' && zle accept-line
 }
 zle -N cd-up
 bindkey "^Q" cd-up
@@ -357,7 +343,7 @@ if [[ "$(uname)" = 'Darwin' ]] ; then
 else
   alias vi='/usr/bin/vim'
   alias vim='/usr/bin/vim'
-  if which dircolors > /dev/null 2>&1; then
+  if which dircolors > /dev/null 2>&1 && which dir_colors > /dev/null 2>&1; then
     test -r ~/.dir_colors && eval "$(dircolors -b ~/.dir_colors)" || eval "$(dir_colors -b)"
     abbrev-alias ls='ls --color=auto'
     abbrev-alias dir='dir --color=auto'
@@ -454,7 +440,7 @@ tkill() {
   tmux kill-session -t "$1"
 }
 
-tkillall() { 
+tkillall() {
   tmux kill-server
 }
 
@@ -529,7 +515,7 @@ pane() {
     if [ $(( $COUNT & 1 )) ]; then
       tmux split-window -h
     else
- 	    tmux split-window -v
+            tmux split-window -v
     fi
     tmux select-layout tiled 1>/dev/null
     COUNT=$(( $COUNT + 1 ))
@@ -552,7 +538,7 @@ calc-zsh() {
 }
 
 report-zsh() {
-  for i in $(seq 1 10); do time zsh -i -c exit; done 
+  for i in $(seq 1 10); do time zsh -i -c exit; done
 }
 
 zload() {
@@ -599,3 +585,4 @@ zshrc-update(){
 if [ -e　~/.zshrc_local ]; then
   source ~/.zshrc_local
 fi
+cat: C: そのようなファイルやディレクトリはありません
