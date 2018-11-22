@@ -56,6 +56,9 @@ zstyle ':completion:*:*:kubectl:*' list-grouped false
 
 # Tracks your most used directories, based on 'frecency'.
 zplug "rupa/z", use:"*.sh" lazy:true
+if [ ! -f ${HOME}/.z ]; then
+  touch ${HOME}/.z
+fi
 
 # zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
 zplug "nnao45/ztl", use:'src/_*' lazy:true
