@@ -26,12 +26,48 @@ if [ -z $TMUX ]; then
 fi
 
 #######################################
-# 外部プラグイン
+# コマンドのインストール管理
 # zplug
 if [ ! -d ~/.zplug ]; then
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
+# fzf
+if ! which fzf >/dev/null 2>&1; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
+
+# tmux
+if ! which tmux >/dev/null 2>&1; then
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    brew install tmux
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -C $HOME/tmux-2.8
+    cd tmux-2.8
+    ./configure && make
+    make install
+    cd ../
+    rm -rf tmux-2.8 tmux-2.8.tar.gz
+  fi
+fi
+
+# go
+if ! which go >/dev/null 2>&1; then
+  UNAME=""
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    UNAME="darwin"
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    UNAME="linux"
+  fi
+  mkdir $HOME/go
+  mkdir $HOME/go-third-party
+  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+fi
+
+#######################################
+# 外部プラグイン
+# zplug
 source ~/.zplug/init.zsh
 
 # 構文のハイライト(https://github.com/zdharma/fast-syntax-highlighting)
@@ -76,10 +112,9 @@ zplug "b4b4r07/emoji-cli", lazy:true
 # Then, source plugins and add commands to $PATH
 zplug load
 
-if ! which fzf >/dev/null 2>&1; then
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  ~/.fzf/install
-fi
+#######################################
+# コマンドのインストール管理
+# zplug
 
 #######################################
 # プロンプトなどの設定
@@ -583,7 +618,7 @@ zload() {
 
 zshrc-update(){
   rm -f ~/.zshrc
-  wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc
+  wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc -P ~/
   exec zsh
 }
 
