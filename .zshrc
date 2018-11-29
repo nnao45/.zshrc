@@ -62,6 +62,8 @@ if ! which go >/dev/null 2>&1; then
   fi
   mkdir $HOME/go
   mkdir $HOME/go-third-party
+  export GOPATH=$HOME/go-third-party
+  mkdir -p $GOPATH/src/github.com/
   wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
 fi
 
@@ -616,10 +618,21 @@ zload() {
   done
 }
 
-zshrc-update(){
-  rm -f ~/.zshrc
-  wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc -P ~/
+zshrc-pull(){
+  rm -f ${HOME}/.zshrc
+  wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc -P ${HOME}/
   exec zsh
+}
+
+zshrc-push(){
+  mkdir ${HOME}/tmp-zshdir
+  git clone https://github.com/nnao45/.zshrc.git ${HOME}/tmp-zshdir
+  rm -f ${HOME}/tmp-zshdir/.zshrc
+  cp ${HOME}/.zshrc ${HOME}/tmp-zshdir
+  cd ${HOME}/tmp-zshdir
+  git add .
+  git commit -m $(date +%Y/%m/%d_%H:%M:%S)
+  git push -f origin master
 }
 
 ########################################
