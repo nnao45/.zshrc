@@ -637,6 +637,40 @@ zshrc-push(){
   rm -rf ${TMPDIR}
 }
 
+microk8s-init(){
+  if ! which multipass >/dev/null 2>&1; then
+    echo "Please intall multipass"
+    return 1
+  fi
+
+  # Set the VM Name.
+  local MICROK8S_VM_NAME="nnao45-k8s-vm"
+
+  # Setup the VM.
+  multipass launch --name ${MICROK8S_VM_NAME} --mem 4G --disk 40G --cpus 2
+
+  # Install the Kubernetes.
+  multipass exec ${MICROK8S_VM_NAME} -- sudo snap install microk8s --classic
+  multipass exec ${MICROK8S_VM_NAME} -- sudo iptables -P FORWARD ACCEPT
+
+  # Wait during wake up the microk8s.
+  echo "Initial Setup is Starting."
+
+  multipass exec ${MICROK8S_VM_NAME} -- sh -c 'while [ ! $(/snap/bin/microk8s.status > /dev/null; echo $?) -eq 0 ]; do echo -n .; sleep 1; done'
+
+  echo "Initial Setup is Done."
+  
+  # Install & Setup the dns metrics-server addons.
+  multipass exec ${MICROK8S_VM_NAME} -- /snap/bin/microk8s.enable dns metrics-server
+
+  # Install & Setup the kubectl
+  multipass exec ${MICROK8S_VM_NAME} -- sudo snap install kubectl --classic
+  multipass exec ${MICROK8S_VM_NAME} -- sh -c '/snap/bin/microk8s.config > /home/multipass/.kube/kubeconfig'
+  multipass exec ${MICROK8S_VM_NAME} -- cat /home/multipass/.kube/kubeconfig > ./${MICROK8S_VM_NAME}-kubeconfig
+
+  echo "microk8s-init is done."
+}
+
 ########################################
 # その他
 # ローカルの設定を見る
