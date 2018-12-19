@@ -621,6 +621,7 @@ zload() {
 zshrc-pull(){
   rm -f ${HOME}/.zshrc
   wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc -P ${HOME}/
+  cd ${HOME}
   exec zsh
 }
 
@@ -635,6 +636,7 @@ zshrc-push(){
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
   rm -rf ${TMPDIR}
+  cd ${HOME}
 }
 
 microk8s-init(){
@@ -648,6 +650,10 @@ microk8s-init(){
 
   # Setup the VM.
   multipass launch --name ${MICROK8S_VM_NAME} --mem 4G --disk 40G --cpus 2
+
+  # Echo the VM IP
+  local MICROK8S_VM_IP=$(multipass list | tail -n1 | awk '{print $3}')
+  echo ${MICROK8S_VM_NAME}"'s" IP is ${MICROK8S_VM_IP}
 
   # Install the Kubernetes.
   multipass exec ${MICROK8S_VM_NAME} -- sudo snap install microk8s --classic
