@@ -631,8 +631,8 @@ zshrc-push(){
   git add .
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
-  rm -rf ${TMPDIR}
   cd ${HOME}
+  rm -rf ${TMPDIR}
 }
 
 microk8s-init(){
