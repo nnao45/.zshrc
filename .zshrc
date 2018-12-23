@@ -23,6 +23,9 @@ if [ -z $TMUX ]; then
     --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227,marker:227
     --no-mouse
   '
+
+  # rustのPATH
+  source ${HOME}/.cargo/env
 fi
 
 #######################################
@@ -65,6 +68,11 @@ if ! which go >/dev/null 2>&1; then
   export GOPATH=$HOME/go-third-party
   mkdir -p $GOPATH/src/github.com/
   wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+fi
+
+# rust
+if ! which rustc >/dev/null 2>&1; then
+  curl https://sh.rustup.rs -sSf | sh
 fi
 
 #######################################
@@ -113,6 +121,10 @@ zplug "b4b4r07/emoji-cli", lazy:true
 #fi
 # Then, source plugins and add commands to $PATH
 zplug load
+
+#######################################
+# コマンドのインストール管理
+# zplug
 
 #######################################
 # プロンプトなどの設定
@@ -631,8 +643,8 @@ zshrc-push(){
   git add .
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
-  cd ${HOME}
   rm -rf ${TMPDIR}
+  cd ${HOME}
 }
 
 microk8s-init(){
