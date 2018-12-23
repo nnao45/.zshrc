@@ -1,4 +1,51 @@
 ########################################
+# 外部プラグイン
+# zplug
+source ~/.zplug/init.zsh
+
+# 構文のハイライト(https://github.com/zdharma/fast-syntax-highlighting)
+zplug "zdharma/fast-syntax-highlighting", defer:2
+# タイプ補完
+zplug "zsh-users/zsh-autosuggestions"
+zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
+zplug "chrissicool/zsh-256color"
+
+# simple trash tool that works on CLI, written in Go(https://github.com/b4b4r07/gomi)
+zplug 'b4b4r07/gomi', as:command, from:gh-r
+
+# 略語を展開する
+zplug "momo-lab/zsh-abbrev-alias"
+
+# dockerコマンドの補完
+zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
+
+# kubectlコマンドの補完
+zplug "nnao45/zsh-kubectl-completion", lazy:true
+zstyle ':completion:*:*:kubectl:*' list-grouped false
+
+# Tracks your most used directories, based on 'frecency'.
+zplug "rupa/z", use:"*.sh" lazy:true
+if [ ! -f ${HOME}/.z ]; then
+  mkdir ${HOME}/.z
+fi
+
+# zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
+zplug "nnao45/ztl", use:'src/_*' lazy:true
+
+# コマンドラインで絵文字
+zplug "b4b4r07/emoji-cli", lazy:true
+
+# Install plugins if there are plugins that have not been installed
+#if ! zplug check --verbose; then
+#  printf "Install? [y/N]: "
+#  if read -q; then
+#  echo; zplug install
+#  fi
+#fi
+# Then, source plugins and add commands to $PATH
+zplug load
+
+########################################
 # 環境変数
 
 # tmuxでなんども読み込まない為に。
@@ -74,57 +121,6 @@ fi
 if ! which rustc >/dev/null 2>&1; then
   curl https://sh.rustup.rs -sSf | sh
 fi
-
-#######################################
-# 外部プラグイン
-# zplug
-source ~/.zplug/init.zsh
-
-# 構文のハイライト(https://github.com/zdharma/fast-syntax-highlighting)
-zplug "zdharma/fast-syntax-highlighting", defer:2
-# タイプ補完
-zplug "zsh-users/zsh-autosuggestions"
-zplug "zsh-users/zsh-completions", use:'src/_*', lazy:true
-zplug "chrissicool/zsh-256color"
-
-# simple trash tool that works on CLI, written in Go(https://github.com/b4b4r07/gomi)
-zplug 'b4b4r07/gomi', as:command, from:gh-r
-
-# 略語を展開する
-zplug "momo-lab/zsh-abbrev-alias"
-
-# dockerコマンドの補完
-zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
-
-# kubectlコマンドの補完
-zplug "nnao45/zsh-kubectl-completion", lazy:true
-zstyle ':completion:*:*:kubectl:*' list-grouped false
-
-# Tracks your most used directories, based on 'frecency'.
-zplug "rupa/z", use:"*.sh" lazy:true
-if [ ! -f ${HOME}/.z ]; then
-  mkdir ${HOME}/.z
-fi
-
-# zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
-zplug "nnao45/ztl", use:'src/_*' lazy:true
-
-# コマンドラインで絵文字
-zplug "b4b4r07/emoji-cli", lazy:true
-
-# Install plugins if there are plugins that have not been installed
-#if ! zplug check --verbose; then
-#  printf "Install? [y/N]: "
-#  if read -q; then
-#  echo; zplug install
-#  fi
-#fi
-# Then, source plugins and add commands to $PATH
-zplug load
-
-#######################################
-# コマンドのインストール管理
-# zplug
 
 #######################################
 # プロンプトなどの設定
@@ -694,3 +690,7 @@ fi
 
 # fzfのパス
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# rustの補完関数のロード
+fpath="${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" autoload -Uz +X "_cargo"
+fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) compinit
