@@ -634,16 +634,16 @@ zshrc-pull(){
 }
 
 zshrc-push(){
-  TMPDIR=${HOME}/tmp-zshdir
-  mkdir ${TMPDIR}
-  git clone https://github.com/nnao45/.zshrc.git ${TMPDIR}
+  ZSH_TMPDIR=${HOME}/tmp-zshdir
+  mkdir ${ZSH_TMPDIR}
+  git clone https://github.com/nnao45/.zshrc.git ${ZSH_TMPDIR}
   rm -f ${HOME}/tmp-zshdir/.zshrc
-  cp ${HOME}/.zshrc ${TMPDIR}
+  cp ${HOME}/.zshrc ${ZSH_TMPDIR}
   cd ${HOME}/tmp-zshdir
   git add .
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
-  rm -rf ${TMPDIR}
+  rm -rf ${ZSH_TMPDIR}
   cd ${HOME}
 }
 
