@@ -1,3 +1,50 @@
+#######################################
+# コマンドのインストール管理
+# zplug
+if [ ! -d ~/.zplug ]; then
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+fi
+
+# fzf
+if ! which fzf >/dev/null 2>&1; then
+  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+  ~/.fzf/install
+fi
+
+# tmux
+if ! which tmux >/dev/null 2>&1; then
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    brew install tmux
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -C $HOME/tmux-2.8
+    cd tmux-2.8
+    ./configure && make
+    make install
+    cd ../
+    rm -rf tmux-2.8 tmux-2.8.tar.gz
+  fi
+fi
+
+# go
+if ! which go >/dev/null 2>&1; then
+  UNAME=""
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    UNAME="darwin"
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    UNAME="linux"
+  fi
+  mkdir $HOME/go
+  mkdir $HOME/go-third-party
+  export GOPATH=$HOME/go-third-party
+  mkdir -p $GOPATH/src/github.com/
+  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+fi
+
+# rust
+if ! which rustc >/dev/null 2>&1; then
+  curl https://sh.rustup.rs -sSf | sh
+fi
+
 ########################################
 # 外部プラグイン
 # zplug
@@ -75,53 +122,6 @@ if [ -z $TMUX ]; then
   source ${HOME}/.cargo/env
   fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) 
   autoload -Uz +X "_cargo"
-fi
-
-#######################################
-# コマンドのインストール管理
-# zplug
-if [ ! -d ~/.zplug ]; then
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
-
-# fzf
-if ! which fzf >/dev/null 2>&1; then
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  ~/.fzf/install
-fi
-
-# tmux
-if ! which tmux >/dev/null 2>&1; then
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    brew install tmux
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -C $HOME/tmux-2.8
-    cd tmux-2.8
-    ./configure && make
-    make install
-    cd ../
-    rm -rf tmux-2.8 tmux-2.8.tar.gz
-  fi
-fi
-
-# go
-if ! which go >/dev/null 2>&1; then
-  UNAME=""
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    UNAME="darwin"
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    UNAME="linux"
-  fi
-  mkdir $HOME/go
-  mkdir $HOME/go-third-party
-  export GOPATH=$HOME/go-third-party
-  mkdir -p $GOPATH/src/github.com/
-  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
-fi
-
-# rust
-if ! which rustc >/dev/null 2>&1; then
-  curl https://sh.rustup.rs -sSf | sh
 fi
 
 #######################################
