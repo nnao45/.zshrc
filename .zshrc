@@ -73,6 +73,8 @@ if [ -z $TMUX ]; then
 
   # rustのPATH
   source ${HOME}/.cargo/env
+  fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) 
+  autoload -Uz +X "_cargo"
 fi
 
 #######################################
@@ -690,7 +692,3 @@ fi
 
 # fzfのパス
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# rustの補完関数のロード
-fpath="${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" autoload -Uz +X "_cargo"
-fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) compinit
