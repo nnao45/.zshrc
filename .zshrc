@@ -123,7 +123,6 @@ if [ -z $TMUX ]; then
   fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) 
   autoload -Uz +X "_cargo"
 fi
-
 #######################################
 # プロンプトなどの設定
 # 色を使用出来るようにする
@@ -680,7 +679,33 @@ microk8s-init(){
   multipass exec ${MICROK8S_VM_NAME} -- sh -c '/snap/bin/microk8s.config > /home/multipass/.kube/kubeconfig'
   multipass exec ${MICROK8S_VM_NAME} -- cat /home/multipass/.kube/kubeconfig > ./${MICROK8S_VM_NAME}-kubeconfig
 
+ # Enable IPtables FORWARD policy
+  multipass exec ${MICROK8S_VM_NAME} -- sudo iptables -P FORWARD ACCEPT
+
   echo "microk8s-init is done."
+}
+
+kubeconfig-update(){
+  if [ -z {1}]; then
+    echo "Usage kubeconfig-update <args>"
+    return 1
+  fi
+  KUBECONFIG=~/.kube/config:${1} kubectl config view --flatten > ~/new-kubeconfig
+  mv ~/.kube/config ~/.kube/config_bak
+  cp ~/new-kubeconfig ~/.kube/config
+  rm -f ~/new-kubeconfig
+}
+
+term-logs-archive(){
+  local LOGDIR=${HOME}/term_logs
+  local LAST_MONTH_DATE=$(date -v -1m +'%Y-%m')
+  local LAST_MONTH_LOGDIR=${LOGDIR}/${LAST_MONTH_DATE}
+  local LAST_MONTH_LOGLIST=($(ls -1d ${LOGDIR}/* | grep ${LAST_MONTH_DATE}))
+
+  mkdir ${LAST_MONTH_LOGDIR}
+  mv ${LAST_MONTH_LOGLIST} ${LAST_MONTH_LOGDIR}
+  tar cvfz ${LAST_MONTH_LOGDIR}.tar.gz -C ${LOGDIR} ${LAST_MONTH_DATE}
+  rm -rf ${LAST_MONTH_LOGDIR}
 }
 
 ########################################
