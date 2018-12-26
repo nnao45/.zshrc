@@ -686,7 +686,7 @@ microk8s-init(){
 }
 
 kubeconfig-update(){
-  if [ -z {1}]; then
+  if [ -z {1} ]; then
     echo "Usage kubeconfig-update <args>"
     return 1
   fi
