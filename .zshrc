@@ -665,7 +665,7 @@ microk8s-init(){
   multipass exec ${MICROK8S_VM_NAME} -- sudo iptables -P FORWARD ACCEPT
 
   # Wait during wake up the microk8s.
-  echo "Initial Setup is Starting."
+  echo "Initial Setup is Starting"
 
   multipass exec ${MICROK8S_VM_NAME} -- sh -c 'while [ ! $(/snap/bin/microk8s.status > /dev/null; echo $?) -eq 0 ]; do echo -n .; sleep 1; done'
 
@@ -686,8 +686,8 @@ microk8s-init(){
 }
 
 kubeconfig-update(){
-  if [ -z {1} ]; then
-    echo "Usage kubeconfig-update <args>"
+  if [ -z ${1} ]; then
+    echo "Usage: ${0} <new kubeconfig path>"
     return 1
   fi
   KUBECONFIG=~/.kube/config:${1} kubectl config view --flatten > ~/new-kubeconfig
