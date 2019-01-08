@@ -634,9 +634,9 @@ zshrc-push(){
   ZSH_TMPDIR=${HOME}/tmp-zshdir
   mkdir ${ZSH_TMPDIR}
   git clone https://github.com/nnao45/.zshrc.git ${ZSH_TMPDIR}
-  rm -f ${HOME}/tmp-zshdir/.zshrc
+  rm -f ${ZSH_TMPDIR}/.zshrc
   cp ${HOME}/.zshrc ${ZSH_TMPDIR}
-  cd ${HOME}/tmp-zshdir
+  cd ${ZSH_TMPDIR}
   git add .
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
