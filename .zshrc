@@ -6,21 +6,23 @@ if [ ! -d ~/.zplug ]; then
 fi
 
 # fzf
-if ! which fzf >/dev/null 2>&1; then
-  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-  ~/.fzf/install
-fi
+#if ! which fzf >/dev/null 2>&1; then
+#  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+#  ~/.fzf/install
+#fi
 
 # tmux
 if ! which tmux >/dev/null 2>&1; then
   if [[ "$(uname)" = 'Darwin' ]] ; then
     brew install tmux
   elif [[ "$(uname)" = 'Linux' ]] ; then
-    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -C $HOME/tmux-2.8
+    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -P $HOME/tmux-2.8
+    cd tmux-2.8
+    tar xvfz tmux-2.8.tar.gz
     cd tmux-2.8
     ./configure && make
     make install
-    cd ../
+    cd ${HOME}
     rm -rf tmux-2.8 tmux-2.8.tar.gz
   fi
 fi
@@ -30,14 +32,14 @@ if ! which go >/dev/null 2>&1; then
   UNAME=""
   if [[ "$(uname)" = 'Darwin' ]] ; then
     UNAME="darwin"
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    UNAME="linux"
+#  elif [[ "$(uname)" = 'Linux' ]] ; then
+#    UNAME="linux"
   fi
-  mkdir $HOME/go
-  mkdir $HOME/go-third-party
-  export GOPATH=$HOME/go-third-party
-  mkdir -p $GOPATH/src/github.com/
-  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+#  mkdir $HOME/go
+#  mkdir $HOME/go-third-party
+#  export GOPATH=$HOME/go-third-party
+#  mkdir -p $GOPATH/src/github.com/
+#  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
 fi
 
 # rust
@@ -117,7 +119,11 @@ if [ -z $TMUX ]; then
 
   # rustのPATH
   source ${HOME}/.cargo/env
-  fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) 
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    fpath=("${HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/share/zsh/site-functions" $fpath) 
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    fpath=("${HOME}/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/share/zsh/site-functions" $fpath)
+  fi
   autoload -Uz +X "_cargo"
 fi
 #######################################
@@ -173,7 +179,7 @@ autoload -U is-at-least
 zmodload zsh/datetime
 
 reset_tmout() {
-  TMOUT=$[1-EPOCHSECONDS%1]
+  TMOUT=$[30-EPOCHSECONDS%30]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
@@ -231,7 +237,13 @@ zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # awscli コマンドの補完機能有効化
-source /usr/local/bin/aws_zsh_completer.sh
+if which /usr/local/bin/aws >/dev/null 2>&1; then
+  source /usr/local/bin/aws_zsh_completer.sh
+elif which /usr/bin/aws >/dev/null 2>&1; then
+  source /usr/bin/aws_zsh_completer.sh
+elif which ~/.local/bin/aws >/dev/null 2>&1; then
+  source ~/.local/bin/aws_zsh_completer.sh
+fi
 
 # 選択中の候補を塗りつぶす
 zstyle ':completion:*:default' menu select=2
@@ -355,9 +367,6 @@ cd-up() {
 }
 zle -N cd-up
 bindkey "^Q" cd-up
-
-# clear command
-#bindkey "^S" clear-screen
 
 # word forward
 bindkey "^N" forward-word
