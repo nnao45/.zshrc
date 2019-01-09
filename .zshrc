@@ -179,7 +179,7 @@ autoload -U is-at-least
 zmodload zsh/datetime
 
 reset_tmout() {
-  TMOUT=$[30-EPOCHSECONDS%30]
+  TMOUT=$[1-EPOCHSECONDS%1]
 }
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
@@ -367,6 +367,13 @@ cd-up() {
 }
 zle -N cd-up
 bindkey "^Q" cd-up
+
+# cd-down
+cd-down() {
+  zle push-line && LBUFFER='pd' && zle accept-line
+}
+zle -N cd-down
+bindkey "^S" cd-down
 
 # word forward
 bindkey "^N" forward-word
