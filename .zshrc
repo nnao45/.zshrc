@@ -178,9 +178,15 @@ autoload -U is-at-least
 # $EPOCHSECONDS, strftime等を利用可能に
 zmodload zsh/datetime
 
-reset_tmout() {
-  TMOUT=$[1-EPOCHSECONDS%1]
-}
+if [[ "$(uname)" = 'Darwin' ]] ; then
+  reset_tmout() {
+    TMOUT=$[1-EPOCHSECONDS%1]
+  }
+else
+  reset_tmout() {
+    TMOUT=$[30-EPOCHSECONDS%30]
+  }
+fi
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
