@@ -681,7 +681,6 @@ microk8s-init(){
 
   # Install the Kubernetes.
   multipass exec ${MICROK8S_VM_NAME} -- sudo snap install microk8s --classic
-  multipass exec ${MICROK8S_VM_NAME} -- sudo iptables -P FORWARD ACCEPT
 
   # Wait during wake up the microk8s.
   echo "Initial Setup is Starting"
