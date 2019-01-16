@@ -485,7 +485,7 @@ autoload -Uz zmv
 alias zmv='noglob zmv -W'
 
 # popd
-abbrev-alias pd='popd'
+abbrev-alias pd='popd > /dev/null'
 
 # kubectl
 alias k='kubectl'
