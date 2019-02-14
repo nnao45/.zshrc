@@ -718,11 +718,16 @@ term-logs-archive(){
   local LOGDIR=${HOME}/term_logs
   local LAST_MONTH_DATE=$(date -v -1m +'%Y-%m')
   local LAST_MONTH_LOGDIR=${LOGDIR}/${LAST_MONTH_DATE}
+  local LAST_MONTH_LOGARCHIVE=${LAST_MONTH_LOGDIR}.tar.gz
   local LAST_MONTH_LOGLIST=($(ls -1d ${LOGDIR}/* | grep ${LAST_MONTH_DATE}))
 
+  if [ -e ${LAST_MONTH_LOGARCHIVE} ]; then
+    echo 'Last month archive is existed. exit.'
+    return 1
+  fi
   mkdir ${LAST_MONTH_LOGDIR}
   mv ${LAST_MONTH_LOGLIST} ${LAST_MONTH_LOGDIR}
-  tar cvfz ${LAST_MONTH_LOGDIR}.tar.gz -C ${LOGDIR} ${LAST_MONTH_DATE}
+  tar cvfz ${LAST_MONTH_LOGARCHIVE} -C ${LOGDIR} ${LAST_MONTH_DATE}
   rm -rf ${LAST_MONTH_LOGDIR}
 }
 
