@@ -47,6 +47,17 @@ if ! which rustc >/dev/null 2>&1; then
   curl https://sh.rustup.rs -sSf | sh
 fi
 
+# krew
+if [ ! -d ~/.krew ]; then
+  (
+  set -x; cd "$(mktemp -d)" &&
+  curl -fsSLO "https://storage.googleapis.com/krew/v0.2.1/krew.{tar.gz,yaml}" &&
+  tar zxvf krew.tar.gz &&
+  ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" install \
+    --manifest=krew.yaml --archive=krew.tar.gz
+  )
+fi
+
 ########################################
 # 外部プラグイン
 # zplug
@@ -109,6 +120,9 @@ if [ -z $TMUX ]; then
   if [ ~/.zshrc -nt ~/.zshrc.zwc ]; then
     zcompile ~/.zshrc
   fi
+
+  # krewの為に
+  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
   # fzfのオプション
   export FZF_DEFAULT_OPTS='
