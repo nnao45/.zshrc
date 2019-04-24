@@ -745,6 +745,10 @@ term-logs-archive(){
   rm -rf ${LAST_MONTH_LOGDIR}
 }
 
+docker-rmi-all(){
+  docker images | grep ${1} | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi ${1}:{}
+}
+
 ########################################
 # その他
 # ローカルの設定を見る
