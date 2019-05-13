@@ -746,7 +746,15 @@ term-logs-archive(){
 }
 
 docker-rmi-all(){
+  if [ -z ${1} ]; then
+    echo "Usage: ${0} <docker image name>"
+    return 1
+  fi
   docker images | grep ${1} | tr -s ' ' | cut -d ' ' -f 2 | xargs -I {} docker rmi ${1}:{}
+}
+
+rust_start(){
+  cat ~/.gitconfig | tail -n17 > ./.git/config
 }
 
 ########################################
