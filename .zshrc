@@ -5,12 +5,6 @@ if [ ! -d ~/.zplug ]; then
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
-# fzf
-#if ! which fzf >/dev/null 2>&1; then
-#  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-#  ~/.fzf/install
-#fi
-
 # tmux
 if ! which tmux >/dev/null 2>&1; then
   if [[ "$(uname)" = 'Darwin' ]] ; then
@@ -32,14 +26,39 @@ if ! which go >/dev/null 2>&1; then
   UNAME=""
   if [[ "$(uname)" = 'Darwin' ]] ; then
     UNAME="darwin"
-#  elif [[ "$(uname)" = 'Linux' ]] ; then
-#    UNAME="linux"
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    UNAME="linux"
   fi
-#  mkdir $HOME/go
-#  mkdir $HOME/go-third-party
-#  export GOPATH=$HOME/go-third-party
-#  mkdir -p $GOPATH/src/github.com/
-#  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+  mkdir $HOME/go
+  mkdir $HOME/go-third-party
+  export GOPATH=$HOME/go-third-party
+  mkdir -p $GOPATH/src/github.com/
+  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
+fi
+
+# hub
+if ! which hub >/dev/null 2>&1; then
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    brew install hub
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    mkdir -p "$GOPATH"/src/github.com/github
+    git clone \
+    --config transfer.fsckobjects=false \
+    --config receive.fsckobjects=false \
+    --config fetch.fsckobjects=false \
+    https://github.com/github/hub.git "$GOPATH"/src/github.com/github/hub
+    cd "$GOPATH"/src/github.com/github/hub
+    make install prefix=/usr/local
+  fi
+fi
+
+# ghq
+if ! which ghq >/dev/null 2>&1; then
+  if [[ "$(uname)" = 'Darwin' ]] ; then
+    brew install ghq
+  elif [[ "$(uname)" = 'Linux' ]] ; then
+    go get github.com/motemen/ghq
+  fi
 fi
 
 # rust
@@ -527,6 +546,14 @@ tkillall() {
   tmux kill-server
 }
 
+g() {
+  cd $(ghq root)/$(ghq list | fzf)
+}
+
+gh() {
+  hub browse $(ghq list | fzf | cut -d "/" -f 2,3)
+}
+
 see() {
   local -A SEE_OPTHASH
   zparseopts -D -A SEE_OPTHASH -- -log l
@@ -666,7 +693,7 @@ zshrc-pull(){
 zshrc-push(){
   ZSH_TMPDIR=${HOME}/tmp-zshdir
   mkdir ${ZSH_TMPDIR}
-  git clone https://github.com/nnao45/.zshrc.git ${ZSH_TMPDIR}
+  git clone git@github.com:nnao45/.zshrc.git ${ZSH_TMPDIR}
   rm -f ${ZSH_TMPDIR}/.zshrc
   cp ${HOME}/.zshrc ${ZSH_TMPDIR}
   cd ${ZSH_TMPDIR}
