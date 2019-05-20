@@ -550,6 +550,14 @@ g() {
   cd $(ghq root)/$(ghq list | fzf)
 }
 
+gg() {
+  if [ -z ${1} ]; then
+    echo "Usage: ${0} <github repo URL>"
+    return 1
+  fi
+  ghq get ${1}
+}
+
 gh() {
   hub browse $(ghq list | fzf | cut -d "/" -f 2,3)
 }
