@@ -48,7 +48,7 @@ if ! which hub >/dev/null 2>&1; then
     --config fetch.fsckobjects=false \
     https://github.com/github/hub.git "$GOPATH"/src/github.com/github/hub
     cd "$GOPATH"/src/github.com/github/hub
-    make install prefix=/usr/local
+    sudo make install prefix=/usr/local
   fi
 fi
 
@@ -100,6 +100,8 @@ zplug "docker/cli", use:"contrib/completion/zsh/_docker" lazy:true
 
 # kubectlコマンドの補完
 zplug "nnao45/zsh-kubectl-completion", lazy:true
+
+## kubectlコマンドの補完リストをグループ化しない
 zstyle ':completion:*:*:kubectl:*' list-grouped false
 
 # Tracks your most used directories, based on 'frecency'.
@@ -130,7 +132,7 @@ if [ -z $TMUX ]; then
   export PATH=/usr/local/bin:$PATH
 
   #エディタをvimに設定
-  export EDITORP=vim
+  export EDITOR=vim
 
   #tmuxinaotrの為に
   export SHELL=zsh
@@ -145,7 +147,7 @@ if [ -z $TMUX ]; then
 
   # fzfのオプション
   export FZF_DEFAULT_OPTS='
-    --height 30% --reverse
+    --height 50% --reverse 
     --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227,marker:227
     --no-mouse
   '
@@ -204,7 +206,6 @@ precmd() {
 }
 
 PROMPT=$'%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%}%{\e[$[32+$RANDOM % 5]m%}❯%{\e[0m%} '
-RPROMPT=$'%{\e[38;5;001m%}%(?..✘$(echo $?)☝)%{\e[0m%} %{\e[30;48;5;237m%}%{\e[38;5;249m%} %D %* %{\e[0m%}'
 
 # プロンプト自動更新設定
 autoload -U is-at-least
@@ -244,23 +245,37 @@ TRAPALRM() {
   redraw_tmout
 }
 
-# 単語の区切り文字を指定する
-WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
-
-## 補完候補の色づけ
-#eval `dircolors`
-export LSCOLORS=gxfxcxdxbxegedabagacad
-export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
-zstyle ':completion:*' list-colors 'di=36' 'ln=35' 'so=32' 'ex=31' 'bd=46;34' 'cd=43;34'
-zstyle ':completion:*' format '%B%d%b'
-zstyle ':completion:*' group-name
-
 ########################################
 # 補完
 # 補完数が多い場合に表示されるメッセージの表示を1000にする。
 LISTMAX=1000
+
+# 単語の区切り文字を指定する
+WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
+
+# 補完候補の色づけ
+export LSCOLORS=gxfxcxdxbxegedabagacad
+export LS_COLORS='di=36:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+# 補完の表示方法を変更する
+# http://zsh.sourceforge.net/Doc/Release/Completion-System.html#Standard-Styles
+
+## コマンドのオプションの説明を表示
+zstyle ':completion:*' verbose yes
+
+## 補完のリストについてはlsと同じ表示色を使う
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+
+## 補完するときのフォーマットを拡張し指定する(http://zsh.sourceforge.net/Doc/Release/Prompt-Expansion.html#Prompt-Expansion)
+zstyle ':completion:*' format '%B%d%b'
+
+## 補完グループのレイアウトをいい感じにする。
+zstyle ':completion:*' group-name ''
+
+## 補完のキャッシュを有効にする
+zstyle ':completion:*' use-cache true
+## kubectlのキャッシュは有効にする
+zstyle ':completion:*:*:kubectl:*' use-cache false
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -271,6 +286,9 @@ zstyle ':completion:*' ignore-parents parent pwd ..
 # sudo の後ろでコマンド名を補完する
 zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
            /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+
+#kill の候補にも色付き表示
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31'
 
 # ps コマンドのプロセス名補完
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
@@ -373,6 +391,12 @@ bindkey "^[[1~" beginning-of-line
 # Endキー
 bindkey "^[[4~" end-of-line
 
+# Aでバッファの一番前
+bindkey '^A' beginning-of-line
+
+# Eでバッファの一番後ろ
+bindkey "^E" end-of-line
+
 # ヒストリー検索をfzfで。
 fzf-select-history() {
   BUFFER=$(history 1 | sort -k1,1nr | perl -ne 'BEGIN { my @lines = (); } s/^\s*\d+\*?\s*//; $in=$_; if (!(grep {$in eq $_} @lines)) { push(@lines, $in); print $in; }' | fzf --no-sort --query "$LBUFFER")
@@ -417,6 +441,13 @@ bindkey "^S" cd-down
 # word forward
 bindkey "^N" forward-word
 bindkey "^B" backward-word
+
+# comp-clean
+comp-clean() {
+  rm -f ~/.zcompdump; compinit
+}
+zle -N comp-clean
+bindkey "^G" comp-clean
 
 ########################################
 # エイリアス
@@ -483,21 +514,10 @@ abbrev-alias -g and="|"
 abbrev-alias gm='gomi'
 
 # git command
-abbrev-alias ga='git add'
-abbrev-alias gaa='git add .'
-abbrev-alias gb='git brach'
-abbrev-alias gc='git commit -m'
-abbrev-alias gca='git commit -a -m'
 abbrev-alias gct='git commit -a -m "$(date +%Y-%m-%d_%H-%M-%S)"'
-abbrev-alias gco='git checkout'
-abbrev-alias gp='git push'
 
 # docker
 alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
-abbrev-alias dimg='docker images'
-abbrev-alias drun='docker run'
-abbrev-alias drm='docker rm'
-abbrev-alias drmi='docker rmi'
 abbrev-alias drrm='docker run -it --rm'
 
 # C で標準出力をクリップボードにコピーする
@@ -521,20 +541,19 @@ alias zmv='noglob zmv -W'
 abbrev-alias pd='popd > /dev/null'
 
 # kubectl
-alias k='kubectl'
-abbrev-alias ka='kubectl apply'
-abbrev-alias kd='kubectl delete'
-abbrev-alias kg='kubectl get'
+abbrev-alias k='kubectl'
 abbrev-alias kga='kubectl get all --all-namespaces -o wide'
-abbrev-alias ke='kubectl exec'
+
+# just
+abbrev-alias j='just'
 
 # fzf
 abbrev-alias f='fzf'
 abbrev-alias fp="fzf --preview 'cat {}'"
 
-if [ -n $TMUX ]; then
-  abbrev-alias fzf='fzf-tmux -d 30%'
-fi
+#if [ -n $TMUX ]; then
+#  abbrev-alias fzf='fzf-tmux -d 30%'
+#fi
 
 ########################################
 # 自作関数の設定
@@ -547,7 +566,17 @@ tkillall() {
 }
 
 g() {
-  cd $(ghq root)/$(ghq list | fzf)
+  local REPO=$(ghq root)/$(ghq list | fzf)
+  if [ ! "${REPO}" = "$(ghq root)/" ]; then
+    cd ${REPO}
+  fi 
+}
+
+gc() {
+  local REPO=$(ghq root)/$(ghq list | fzf)
+  if [ ! "${REPO}" = "$(ghq root)/" ]; then
+    code ${REPO}
+  fi
 }
 
 gg() {
@@ -558,18 +587,34 @@ gg() {
   ghq get ${1}
 }
 
+ggc() {
+  if [ -z ${1} ]; then
+    echo "Usage: ${0} <github repo URL>"
+    return 1
+  fi
+  local RESULT=""
+  ghq get ${1}
+  if echo ${1} | grep 'https://' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${1} | cut -c 9-)
+  elif echo ${1} | grep 'git@' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${1} | sed  "s&git@github.com:&github.com/&") 
+  fi
+
+  if echo ${RESULT} | grep '.git' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${RESULT} | rev | cut -c 5- | rev)
+  fi
+
+  code $(ghq root)/${RESULT}
+}
+
 gh() {
-  hub browse $(ghq list | fzf | cut -d "/" -f 2,3)
+  local REPO=$(ghq list | fzf)
+  if [ ! -z "${REPO}"  ]; then
+    hub browse $(echo ${REPO} | cut -d "/" -f 2,3)
+  fi
 }
 
 see() {
-  local -A SEE_OPTHASH
-  zparseopts -D -A SEE_OPTHASH -- -log l
-  local LOG_FLAG=""
-  if [[ -n "${SEE_OPTHASH[(i)-l]}" ]] ||  [[ -n "${SEE_OPTHASH[(i)--log]}" ]]; then
-    # --logが指定された場合
-    LOG_FLAG="true"
-  fi
   local HOST_LINE=`tail -n +5 /etc/hosts | fzf | awk '{print $1, $2}'`
   local HOST_IP=`echo ${HOST_LINE} | awk '{print $1}'`
   local HOST_NAME=`echo ${HOST_LINE} | awk '{print $2}'`
@@ -577,9 +622,6 @@ see() {
   [[ -z ${HOST_LINE} ]] && return 1
 
   local SSH_CMD="ssh -o ConnectTimeout=5"
-  if [[ ! -z ${LOG_FLAG}  ]]; then
-    SSH_CMD="ztl ssh"
-  fi
 
   #commentout imple
   if echo "${HOST_LINE}" | grep '^#' >/dev/null 2>&1; then
@@ -614,6 +656,106 @@ xssh() {
     eval ${SSH_CMD}
     echo ssh ${HOST_NAME} >> ~/.zsh_history
   fi
+}
+
+kexec-tmux(){
+  # set vars
+  local -A KEXEC_OPTHASH
+  integer ret=1
+  zparseopts -D -A KEXEC_OPTHASH -- \
+    n: -namespace:=n \
+    -kubeconfig: \
+    -context: \
+    -cluster: \
+    -user: \
+    s: -server: \
+    f: -fuzzy-finder:=f \
+    h -help=h
+  local KEXEC_FLAG=""
+  local FUZZY_FINDER_CMD="fzf"
+  local KEXEC_CMD="/bin/sh"
+
+  # parse flag
+  if [[ -n "${KEXEC_OPTHASH[(i)-n]}" ]]; then 
+    KEXEC_FLAG+=" --namespace ${KEXEC_OPTHASH[-n]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)--kubeconfig]}" ]]; then
+    KEXEC_FLAG+=" --kubeconfig ${KEXEC_OPTHASH[--kubeconfig]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)--context]}" ]] then
+    KEXEC_FLAG+=" --context ${KEXEC_OPTHASH[--context]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)--user]}" ]]; then
+    KEXEC_FLAG+=" --user ${KEXEC_OPTHASH[--user]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)-s]}" ]]; then
+    KEXEC_FLAG+=" --server ${KEXEC_OPTHASH[-s]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)-f]}" ]]; then
+    FUZZY_FINDER_CMD="${KEXEC_OPTHASH[-f]}"
+  fi
+  if [[ -n "${KEXEC_OPTHASH[(i)-h]}" ]]; then
+    echo "Usage:"
+    echo "  $0 [flags] [options] [command]"
+    echo ''
+    echo 'Flags:'
+    echo '  -n, --namespace string        Kubernetes namespace to use. Default to namespace configured in Kubernetes context'
+    echo '  --kubeconfig string           Path to kubeconfig file to use'
+    echo '  --context string              Kubernetes context to use. Default to current context configured in kubeconfig.'
+    echo '  --user string                 The name of the kubeconfig user to use'
+    echo '  -s, --server string           The address and port of the Kubernetes API server'
+    echo '  -f, ---fuzzy-finder string    The name of the fuzzy finfer(peco, fzf, fzy...etc) to use, default: fzf'
+    echo '  -h, --help                    Print this'
+    return 1
+  fi
+
+  if [ ! -z ${1} ]; then
+    KEXEC_CMD=${@}
+  fi
+
+  # must use tmux
+  # https://github.com/tmux/tmux
+  if [ -z $TMUX ]; then
+    echo "Sorry, xssh is only support on the tmux"
+    return 1
+  fi
+
+  # must use xpanes 
+  # https://github.com/greymd/tmux-xpanes 
+  if ! which xpanes >/dev/null 2>&1; then
+    echo 'xpanes is not found, Please install'
+    return 1
+  fi
+
+  # must use kubectl
+  # https://github.com/kubernetes/kubectl
+  if ! which kubectl >/dev/null 2>&1; then
+    echo 'xpanes is not found, Please install'
+    return 1
+  fi
+
+  # check excutable to select fuzzy finder (peco, fzf, ) 
+  if ! which ${FUZZY_FINDER_CMD} >/dev/null 2>&1; then
+    echo "${FUZZY_FINDER_CMD} is not found, Please install"
+    return 1
+  fi
+
+  # if using fzf, add multi select flag
+  if [ ${FUZZY_FINDER_CMD} = "fzf" ]; then
+    FUZZY_FINDER_CMD+=" -m"
+  fi
+
+
+  # collect exec host
+  local HOST_LINE=$(eval kubectl ${KEXEC_FLAG} get pods | tail +2 | eval ${FUZZY_FINDER_CMD} ) || return 1
+  if [ -z ${HOST_LINE} ]; then
+    return 1
+  fi
+
+  # do exec 
+  local HOST_NAME=($(echo ${HOST_LINE} | awk '{print $1}')) || return ret
+  xpanes -c "kubectl ${KEXEC_FLAG} exec {} -it -- ${KEXEC_CMD}" ${HOST_NAME[@]} && ret = 1
+  return ret
 }
 
 pane() {
@@ -655,7 +797,7 @@ calc-zsh() {
   time (zsh -i -c exit)
 }
 
-report-zsh() {
+bench-zsh() {
   for i in $(seq 1 10); do time zsh -i -c exit; done
 }
 
@@ -692,23 +834,34 @@ zload() {
 }
 
 zshrc-pull(){
-  rm -f ${HOME}/.zshrc
   wget https://raw.githubusercontent.com/nnao45/.zshrc/master/.zshrc -P ${HOME}/
   cd ${HOME}
   exec zsh
 }
 
 zshrc-push(){
-  ZSH_TMPDIR=${HOME}/tmp-zshdir
-  mkdir ${ZSH_TMPDIR}
-  git clone git@github.com:nnao45/.zshrc.git ${ZSH_TMPDIR}
-  rm -f ${ZSH_TMPDIR}/.zshrc
-  cp ${HOME}/.zshrc ${ZSH_TMPDIR}
-  cd ${ZSH_TMPDIR}
+  ZSHRC_DIR=${HOME}/.ghq/github.com/nnao45/.zshrc
+  cp ${HOME}/.zshrc ${ZSHRC_DIR}
+  cd ${ZSHRC_DIR}
   git add .
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
-  rm -rf ${ZSH_TMPDIR}
+  cd ${HOME}
+}
+
+hyperjs-pull(){
+  wget https://raw.githubusercontent.com/nnao45/.hyper.js/master/.hyper.js -P ${HOME}/
+  cd ${HOME}
+  exec zsh
+}
+
+hyperjs-push(){
+  HYPERJS_DIR=${HOME}/.ghq/github.com/nnao45/.hyper.js
+  cp ${HOME}/.hyper.js ${HYPERJS_DIR}
+  cd ${HYPERJS_DIR}
+  git add .
+  git commit -m $(date +%Y/%m/%d_%H:%M:%S)
+  git push -f origin master
   cd ${HOME}
 }
 
@@ -727,6 +880,9 @@ microk8s-init(){
   # Echo the VM IP
   local MICROK8S_VM_IP=$(multipass list | tail -n1 | awk '{print $3}')
   echo ${MICROK8S_VM_NAME}"'s" IP is ${MICROK8S_VM_IP}
+  
+  # Sleep
+  sleep 10
 
   # Install the Kubernetes.
   multipass exec ${MICROK8S_VM_NAME} -- sudo snap install microk8s --classic
@@ -739,7 +895,7 @@ microk8s-init(){
   echo "Initial Setup is Done."
   
   # Install & Setup the dns metrics-server addons.
-  multipass exec ${MICROK8S_VM_NAME} -- /snap/bin/microk8s.enable dns metrics-server
+  multipass exec ${MICROK8S_VM_NAME} -- /snap/bin/microk8s.enable dns
 
   # Install & Setup the kubectl
   multipass exec ${MICROK8S_VM_NAME} -- sudo snap install kubectl --classic
