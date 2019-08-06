@@ -843,7 +843,7 @@ zshrc-push(){
   ZSHRC_DIR=${HOME}/.ghq/github.com/nnao45/.zshrc
   cp ${HOME}/.zshrc ${ZSHRC_DIR}
   cd ${ZSHRC_DIR}
-  git add .
+  git add ./.zshrc
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
   cd ${HOME}
@@ -859,7 +859,7 @@ hyperjs-push(){
   HYPERJS_DIR=${HOME}/.ghq/github.com/nnao45/.hyper.js
   cp ${HOME}/.hyper.js ${HYPERJS_DIR}
   cd ${HYPERJS_DIR}
-  git add .
+  git add ./.hyper.js
   git commit -m $(date +%Y/%m/%d_%H:%M:%S)
   git push -f origin master
   cd ${HOME}
