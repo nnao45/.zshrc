@@ -149,7 +149,7 @@ if [ -z $TMUX ]; then
   export FZF_DEFAULT_OPTS='
     --height 50% --reverse 
     --color=bg+:161,pointer:7,spinner:227,info:227,prompt:161,hl:199,hl+:227,marker:227
-    --no-mouse
+    --no-mouse -m
   '
 
   # rustのPATH
