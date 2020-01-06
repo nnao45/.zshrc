@@ -214,7 +214,7 @@ zmodload zsh/datetime
 
 if [[ "$(uname)" = 'Darwin' ]] ; then
   reset_tmout() {
-    TMOUT=$[1-EPOCHSECONDS%1]
+    TMOUT=$[30-EPOCHSECONDS%30]
   }
 else
   reset_tmout() {
@@ -234,7 +234,7 @@ if is-at-least 5.1; then
   [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
     reset_tmout
   }
-else
+ else
   # evaluating $WIDGET in TMOUT may crash :(
   redraw_tmout() {
     zle reset-prompt; reset_tmout
@@ -420,8 +420,8 @@ fzf-z-search() {
     return 1
   fi
 }
-zle -N fzf-z-search
-bindkey '^F' fzf-z-search
+#zle -N fzf-z-search
+#bindkey '^F' fzf-z-search
 
 # cd up
 cd-up() {
@@ -579,6 +579,13 @@ gc() {
   fi
 }
 
+gi() {
+  local REPO=$(ghq root)/$(ghq list | fzf)
+  if [ ! "${REPO}" = "$(ghq root)/" ]; then
+    /Applications/IntelliJ\ IDEA.app/Contents/MacOS/idea ${REPO}
+  fi
+}
+
 gg() {
   if [ -z ${1} ]; then
     echo "Usage: ${0} <github repo URL>"
@@ -606,6 +613,27 @@ ggc() {
 
   code $(ghq root)/${RESULT}
 }
+
+ggi() {
+  if [ -z ${1} ]; then
+    echo "Usage: ${0} <github repo URL>"
+    return 1
+  fi
+  local RESULT=""
+  ghq get ${1}
+  if echo ${1} | grep 'https://' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${1} | cut -c 9-)
+  elif echo ${1} | grep 'git@' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${1} | sed  "s&git@github.com:&github.com/&") 
+  fi
+
+  if echo ${RESULT} | grep '.git' >/dev/null 2>&1 ; then
+    RESULT=$(echo ${RESULT} | rev | cut -c 5- | rev)
+  fi
+
+  /Applications/IntelliJ\ IDEA.app/Contents/MacOS/idea $(ghq root)/${RESULT}
+}
+
 
 gh() {
   local REPO=$(ghq list | fzf)
@@ -957,3 +985,10 @@ fi
 
 # fzfのパス
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/Users/s02435/.sdkman"
+[[ -s "/Users/s02435/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/s02435/.sdkman/bin/sdkman-init.sh"
+
+# added by travis gem
+[ -f /Users/s02435/.travis/travis.sh ] && source /Users/s02435/.travis/travis.sh
