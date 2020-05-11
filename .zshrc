@@ -5,78 +5,6 @@ if [ ! -d ~/.zplug ]; then
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
 fi
 
-# tmux
-if ! which tmux >/dev/null 2>&1; then
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    brew install tmux
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    wget https://github.com/tmux/tmux/releases/download/2.8/tmux-2.8.tar.gz -P $HOME/tmux-2.8
-    cd tmux-2.8
-    tar xvfz tmux-2.8.tar.gz
-    cd tmux-2.8
-    ./configure && make
-    make install
-    cd ${HOME}
-    rm -rf tmux-2.8 tmux-2.8.tar.gz
-  fi
-fi
-
-# go
-if ! which go >/dev/null 2>&1; then
-  UNAME=""
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    UNAME="darwin"
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    UNAME="linux"
-  fi
-  mkdir $HOME/go
-  mkdir $HOME/go-third-party
-  export GOPATH=$HOME/go-third-party
-  mkdir -p $GOPATH/src/github.com/
-  wget -qO- "https://dl.google.com/go/go1.11.2.${UNAME}-amd64.tar.gz" | tar -zx --strip-components=1 -C $HOME/go
-fi
-
-# hub
-if ! which hub >/dev/null 2>&1; then
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    brew install hub
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    mkdir -p "$GOPATH"/src/github.com/github
-    git clone \
-    --config transfer.fsckobjects=false \
-    --config receive.fsckobjects=false \
-    --config fetch.fsckobjects=false \
-    https://github.com/github/hub.git "$GOPATH"/src/github.com/github/hub
-    cd "$GOPATH"/src/github.com/github/hub
-    sudo make install prefix=/usr/local
-  fi
-fi
-
-# ghq
-if ! which ghq >/dev/null 2>&1; then
-  if [[ "$(uname)" = 'Darwin' ]] ; then
-    brew install ghq
-  elif [[ "$(uname)" = 'Linux' ]] ; then
-    go get github.com/motemen/ghq
-  fi
-fi
-
-# rust
-if ! which rustc >/dev/null 2>&1; then
-  curl https://sh.rustup.rs -sSf | sh
-fi
-
-# krew
-if [ ! -d ~/.krew ]; then
-  (
-  set -x; cd "$(mktemp -d)" &&
-  curl -fsSLO "https://storage.googleapis.com/krew/v0.2.1/krew.{tar.gz,yaml}" &&
-  tar zxvf krew.tar.gz &&
-  ./krew-"$(uname | tr '[:upper:]' '[:lower:]')_amd64" install \
-    --manifest=krew.yaml --archive=krew.tar.gz
-  )
-fi
-
 ########################################
 # 外部プラグイン
 # zplug
@@ -108,10 +36,10 @@ zstyle ':completion:*:*:kubectl:*' list-grouped false
 zplug "rupa/z", use:"*.sh" lazy:true
 
 # zsh内のtmuxでペイン単位で、SSHなど特定のコマンドが終わるまでだけタイムスタンプ付きのログを取る
-zplug "nnao45/ztl", use:'src/_*' lazy:true
+# zplug "nnao45/ztl", use:'src/_*' lazy:true
 
 # コマンドラインで絵文字
-zplug "b4b4r07/emoji-cli", lazy:true
+# zplug "b4b4r07/emoji-cli", lazy:true
 
 # Install plugins if there are plugins that have not been installed
 #if ! zplug check --verbose; then
@@ -130,6 +58,16 @@ zplug load
 if [ -z $TMUX ]; then
   export LANG=ja_JP.UTF-8
   export PATH=/usr/local/bin:$PATH
+
+  # Docker
+  ## WSLからDocker Desktopを触る
+  # export DOCKER_HOST=tcp://localhost:2375 
+  ## Docker Build Kitを使う
+  export DOCKER_BUILDKIT=1
+
+  # GO系
+  export GOPATH=~/go
+  export PATH=$GOPATH/bin:$PATH
 
   #エディタをvimに設定
   export EDITOR=vim
@@ -180,21 +118,68 @@ setopt prompt_subst
 # 改行のない出力をプロンプトで上書きするのを防ぐ
 unsetopt promptcr
 
+#カレントディレクトリ/コマンド記録
+local _cmd=''
+local _lastdir=''
+#gitブランチ名表示
+autoload -Uz vcs_info
+zstyle ':vcs_info:*' enable git
+zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
+zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
+zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
+zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
+
+preexec_gitupdate() {
+  _cmd="$1"
+  _lastdir="$PWD"
+}
+preexec_functions=($preexec_functions preexec_gitupdate)
+#git情報更新
+update_vcs_info() {
+  psvar=()
+  LANG=en_US.UTF-8 vcs_info
+  [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
+}
+#同一dir内でシェル外でgitのHEADが更新されていたら情報更新
+check_gitinfo_update() {
+  if [ -n "$_git_info_dir" -a -n "$_git_info_check_date" ]; then
+    if [ -f "$_git_info_dir"/HEAD(ms-$((EPOCHSECONDS-$_git_info_check_date))) ]; then
+      _git_info_check_date=$EPOCHSECONDS
+      update_vcs_info
+    fi 2>/dev/null
+  fi
+}
+#カレントディレクトリ変更時/git関連コマンド実行時に情報更新
+precmd_gitupdate() {
+  local _r=$?
+  local _git_used=0
+  case "${_cmd}" in
+    git*|stg*) _git_used=1
+  esac
+  if [ $_git_used = 1 -o "${_lastdir}" != "$PWD" ]; then
+    local cwd="./"
+    _git_info_dir=
+    _git_info_check_date=
+    while [ "$(echo $cwd(:a))" != / ]; do
+      if [ -f .git/HEAD ]; then
+        _git_info_dir="$PWD/.git"
+        _git_info_check_date=$EPOCHSECONDS
+        break
+      fi
+      cwd="../$cwd"
+    done
+    update_vcs_info
+  else
+    check_gitinfo_update
+  fi
+  return $_r
+}
+precmd_functions=($precmd_functions precmd_gitupdate)
+
 # 頑張って両方にprmptを表示させるヤツ https://qiita.com/zaapainfoz/items/355cd4d884ce03656285
 precmd() {
-  autoload -Uz vcs_info
-  autoload -Uz add-zsh-hook
-
-  zstyle ':vcs_info:git:*' check-for-changes true
-  zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
-  zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
-  zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
-  zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
-
   local left=$'%{\e[38;5;083m%}%n%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
   local right="${vcs_info_msg_0_} "
-
-  LANG=en_US.UTF-8 vcs_info
 
   # スペースの長さを計算
   # テキストを装飾する場合、エスケープシーケンスをカウントしないようにします
@@ -212,15 +197,9 @@ autoload -U is-at-least
 # $EPOCHSECONDS, strftime等を利用可能に
 zmodload zsh/datetime
 
-if [[ "$(uname)" = 'Darwin' ]] ; then
-  reset_tmout() {
-    TMOUT=$[30-EPOCHSECONDS%30]
-  }
-else
-  reset_tmout() {
-    TMOUT=$[30-EPOCHSECONDS%30]
-  }
-fi
+reset_tmout() {
+  TMOUT=$[1-EPOCHSECONDS%1]
+}
 
 precmd_functions=($precmd_functions reset_tmout reset_lastcomp)
 
@@ -231,7 +210,7 @@ reset_lastcomp() {
 if is-at-least 5.1; then
   # avoid menuselect to be cleared by reset-prompt
   redraw_tmout() {
-  [ "$WIDGET" = "expand-or-complete" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
+  [ "$WIDGET" = "fzf-completion" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
     reset_tmout
   }
  else
@@ -294,13 +273,14 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([%0-9]#)*=0=01;31
 zstyle ':completion:*:processes' command 'ps x -o pid,s,args'
 
 # awscli コマンドの補完機能有効化
-if which /usr/local/bin/aws >/dev/null 2>&1; then
-  source /usr/local/bin/aws_zsh_completer.sh
-elif which /usr/bin/aws >/dev/null 2>&1; then
-  source /usr/bin/aws_zsh_completer.sh
-elif which ~/.local/bin/aws >/dev/null 2>&1; then
-  source ~/.local/bin/aws_zsh_completer.sh
-fi
+autoload bashcompinit && bashcompinit
+complete -C '/usr/local/bin/aws_completer' aws
+#source /usr/local/bin/aws_completer
+#elif which /usr/bin/aws >/dev/null 2>&1; then
+#  source /usr/bin/aws_completer
+#elif which ~/.local/bin/aws >/dev/null 2>&1; then
+#  source ~/.local/bin/aws_completer
+#fi
 
 # 選択中の候補を塗りつぶす
 zstyle ':completion:*:default' menu select=2
@@ -501,11 +481,11 @@ abbrev-alias tree="tree -NC"
 abbrev-alias sudo='sudo '
 
 # グローバルエイリアス
-abbrev-alias -g L='| less'
-abbrev-alias -g G='| grep'
-abbrev-alias -g B='| bc'
-abbrev-alias -g E='| emojify'
-abbrev-alias tree="tree -NC"
+#abbrev-alias -g L='| less'
+#abbrev-alias -g G='| grep'
+#abbrev-alias -g B='| bc'
+#abbrev-alias -g E='| emojify'
+#abbrev-alias tree="tree -NC"
 
 # パイプをandで書く。
 abbrev-alias -g and="|"
@@ -868,7 +848,7 @@ zshrc-pull(){
 }
 
 zshrc-push(){
-  ZSHRC_DIR=${HOME}/.ghq/github.com/nnao45/.zshrc
+  ZSHRC_DIR=$(ghq root)/github.com/nnao45/.zshrc
   cp ${HOME}/.zshrc ${ZSHRC_DIR}
   cd ${ZSHRC_DIR}
   git add ./.zshrc
@@ -884,7 +864,7 @@ hyperjs-pull(){
 }
 
 hyperjs-push(){
-  HYPERJS_DIR=${HOME}/.ghq/github.com/nnao45/.hyper.js
+  HYPERJS_DIR=$(ghq root)/github.com/nnao45/.hyper.js
   cp ${HOME}/.hyper.js ${HYPERJS_DIR}
   cd ${HYPERJS_DIR}
   git add ./.hyper.js
@@ -986,9 +966,10 @@ fi
 # fzfのパス
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/Users/s02435/.sdkman"
-[[ -s "/Users/s02435/.sdkman/bin/sdkman-init.sh" ]] && source "/Users/s02435/.sdkman/bin/sdkman-init.sh"
-
 # added by travis gem
 [ -f /Users/s02435/.travis/travis.sh ] && source /Users/s02435/.travis/travis.sh
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="/home/nnao45/.sdkman"
+[[ -s "/home/nnao45/.sdkman/bin/sdkman-init.sh" ]] && source "/home/nnao45/.sdkman/bin/sdkman-init.sh"
+
+
