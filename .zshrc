@@ -118,68 +118,22 @@ setopt prompt_subst
 # 改行のない出力をプロンプトで上書きするのを防ぐ
 unsetopt promptcr
 
-#カレントディレクトリ/コマンド記録
-local _cmd=''
-local _lastdir=''
-#gitブランチ名表示
+
+
 autoload -Uz vcs_info
-zstyle ':vcs_info:*' enable git
+autoload -Uz add-zsh-hook
+zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
 zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
 zstyle ':vcs_info:*' actionformats '%F{red}%c%u{%r}-[%b|%a]%f'
 
-preexec_gitupdate() {
-  _cmd="$1"
-  _lastdir="$PWD"
-}
-preexec_functions=($preexec_functions preexec_gitupdate)
-#git情報更新
-update_vcs_info() {
-  psvar=()
-  LANG=en_US.UTF-8 vcs_info
-  [[ -n "$vcs_info_msg_0_" ]] && psvar[1]="$vcs_info_msg_0_"
-}
-#同一dir内でシェル外でgitのHEADが更新されていたら情報更新
-check_gitinfo_update() {
-  if [ -n "$_git_info_dir" -a -n "$_git_info_check_date" ]; then
-    if [ -f "$_git_info_dir"/HEAD(ms-$((EPOCHSECONDS-$_git_info_check_date))) ]; then
-      _git_info_check_date=$EPOCHSECONDS
-      update_vcs_info
-    fi 2>/dev/null
-  fi
-}
-#カレントディレクトリ変更時/git関連コマンド実行時に情報更新
-precmd_gitupdate() {
-  local _r=$?
-  local _git_used=0
-  case "${_cmd}" in
-    git*|stg*) _git_used=1
-  esac
-  if [ $_git_used = 1 -o "${_lastdir}" != "$PWD" ]; then
-    local cwd="./"
-    _git_info_dir=
-    _git_info_check_date=
-    while [ "$(echo $cwd(:a))" != / ]; do
-      if [ -f .git/HEAD ]; then
-        _git_info_dir="$PWD/.git"
-        _git_info_check_date=$EPOCHSECONDS
-        break
-      fi
-      cwd="../$cwd"
-    done
-    update_vcs_info
-  else
-    check_gitinfo_update
-  fi
-  return $_r
-}
-precmd_functions=($precmd_functions precmd_gitupdate)
-
 # 頑張って両方にprmptを表示させるヤツ https://qiita.com/zaapainfoz/items/355cd4d884ce03656285
 precmd() {
   local left=$'%{\e[38;5;083m%}%n%{\e[0m%} %{\e[$[32+$RANDOM % 5]m%}➜%{\e[0m%} %{\e[38;5;051m%}%d%{\e[0m%}'
   local right="${vcs_info_msg_0_} "
+
+  LANG=en_US.UTF-8 vcs_info
 
   # スペースの長さを計算
   # テキストを装飾する場合、エスケープシーケンスをカウントしないようにします
@@ -213,7 +167,7 @@ if is-at-least 5.1; then
   [ "$WIDGET" = "fzf-completion" ] && [[ "$_lastcomp[insert]" =~ "^automenu$|^menu:" ]] || zle reset-prompt
     reset_tmout
   }
- else
+else
   # evaluating $WIDGET in TMOUT may crash :(
   redraw_tmout() {
     zle reset-prompt; reset_tmout
