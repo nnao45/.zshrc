@@ -122,7 +122,7 @@ unsetopt promptcr
 
 autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
-zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' check-for-changes false
 zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
 zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
