@@ -58,6 +58,7 @@ zplug load
 if [ -z $TMUX ]; then
   export LANG=ja_JP.UTF-8
   export PATH=/usr/local/bin:$PATH
+  export PATH=$HOME/.poetry/bin:$PATH
 
   # Docker
   ## WSLからDocker Desktopを触る
@@ -118,11 +119,9 @@ setopt prompt_subst
 # 改行のない出力をプロンプトで上書きするのを防ぐ
 unsetopt promptcr
 
-
-
 autoload -Uz vcs_info
 autoload -Uz add-zsh-hook
-zstyle ':vcs_info:git:*' check-for-changes false
+zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr "%F{yellow}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{magenta}+"
 zstyle ':vcs_info:*' formats '%F{green}%c%u{%r}-[%b]%f'
@@ -453,6 +452,9 @@ abbrev-alias gct='git commit -a -m "$(date +%Y-%m-%d_%H-%M-%S)"'
 # docker
 alias dps='docker ps -a --format "table {{.Names}}\t{{.Image}}\t{{.Ports}}\t{{.Status}}"'
 abbrev-alias drrm='docker run -it --rm'
+
+# python
+alias python='python3'
 
 # C で標準出力をクリップボードにコピーする
 # mollifier delta blog : http://mollifier.hatenablog.com/entry/20100317/p1
@@ -910,6 +912,23 @@ rust_start(){
   cat ~/.gitconfig | tail -n17 > ./.git/config
 }
 
+
+#checks to see if we are in a windows or linux dir
+isWinDir(){
+  case $PWD/ in
+    /mnt/*) return $(true);;
+    *) return $(false);;
+  esac
+}
+# wrap the git command to either run windows git or linux
+git(){
+  if isWinDir
+  then
+    git.exe "$@"
+  else
+    /usr/bin/git "$@"
+  fi
+}
 ########################################
 # その他
 # ローカルの設定を見る
